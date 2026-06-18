@@ -1,0 +1,20 @@
+# Mengabaikan folder biner Python
+**/__pycache__/
+*.pyc
+
+# Mengabaikan data mentah berukuran besar
+data/00_raw/CLAS/
+
+# Mengabaikan folder sampah eksperimen
+trash/
+trash_code/
+
+# Mengabaikan environment lokal jika Anda membuat venv di komputer lokal
+venv/
+.venv/
+
+# Mengabaikan file tensor hasil ekstraksi (opsional, disarankan diekstrak ulang di komputer remote)
+data/02_waveform/*.npy
+
+# Mengabaikan model yang tersimpan (opsional, karena model akan dilatih ulang di komputer remote)
+data/03_saved_models/*.keras
