@@ -6,6 +6,7 @@ Deskripsi: Melatih arsitektur tingkat tinggi CNN-BiLSTM menggunakan dataset runt
 """
 
 import os
+import warnings
 import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -13,6 +14,12 @@ from sklearn.utils import class_weight
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 from core import processors, models
+
+# Menghilangkan log peringatan kompilasi biner TensorFlow
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+# Menghilangkan peringatan depresiasi fungsi dari Python/Pandas
+warnings.filterwarnings("ignore")
 
 # 1. Konfigurasi Jalur Direktori
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

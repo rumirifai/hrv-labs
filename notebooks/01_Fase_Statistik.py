@@ -1,7 +1,7 @@
 """
 Fase 01: Pemodelan Berbasis Fitur Statistik Tabular (Unimodal Sensor)
 Deskripsi: Melatih dan mengevaluasi performa model Machine Learning klasik (SVM, RF) 
-           dan Deep Learning (CNN-LSTM, LSTM-MHA) menggunakan 10-Fold Cross Validation.
+           and Deep Learning (CNN-LSTM, LSTM-MHA) menggunakan 10-Fold Cross Validation.
 """
 
 import os
@@ -17,8 +17,11 @@ from sklearn.utils import class_weight
 
 from core import processors, models
 
-warnings.filterwarnings("ignore")
+# Menghilangkan log peringatan kompilasi biner TensorFlow
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+# Menghilangkan peringatan depresiasi fungsi dari Python/Pandas
+warnings.filterwarnings("ignore")
 
 # Konfigurasi Jalur Direktori
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,8 +33,13 @@ os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 def evaluasi_machine_learning_klasik(df, nama_sensor, metode="svm"):
     """Mengevaluasi model SVM atau Random Forest menggunakan 10-Fold Cross Validation."""
     fitur_cols = ["MeanNN_ms", "SDNN_ms", "RMSSD_ms"]
-    X = df.filter(items=fitur_cols).dropna().values
-    y_text = df.filter(items=["Label"]).values.flatten()
+    
+    # Sinkronisasi baris data kosong (dropna secara serentak antara X dan y)
+    df_clean = df.dropna(subset=fitur_cols)
+    X = df_clean[fitur_cols].values
+    y_text = df_clean["Label"].values.flatten()
+    
+    print(f"LOG: Dimensi data tersinkronisasi -> X: {X.shape}, y: {y_text.shape}")
     
     le = LabelEncoder()
     y = le.fit_transform(y_text)
@@ -65,8 +73,11 @@ def evaluasi_machine_learning_klasik(df, nama_sensor, metode="svm"):
 def evaluasi_deep_learning_unimodal(df, nama_sensor, arsitektur="cnn_lstm", seleksi_fitur=None):
     """Mengevaluasi arsitektur CNN-LSTM atau LSTM-Attention dengan opsi pembobotan UFR/MRMR."""
     fitur_cols = ["MeanNN_ms", "SDNN_ms", "RMSSD_ms"]
-    X = df.filter(items=fitur_cols).dropna().values
-    y_text = df.filter(items=["Label"]).values.flatten()
+    
+    # Sinkronisasi baris data kosong agar seimbang sebelum pembagian k-fold
+    df_clean = df.dropna(subset=fitur_cols)
+    X = df_clean[fitur_cols].values
+    y_text = df_clean["Label"].values.flatten()
     
     le = LabelEncoder()
     y = le.fit_transform(y_text)

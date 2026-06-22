@@ -16,8 +16,11 @@ from tensorflow.keras.models import load_model
 
 from core import processors
 
-warnings.filterwarnings("ignore")
+# Menghilangkan log peringatan kompilasi biner TensorFlow
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+# Menghilangkan peringatan depresiasi fungsi dari Python/Pandas
+warnings.filterwarnings("ignore")
 
 # 1. Konfigurasi Jalur Direktori (Directory Paths)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

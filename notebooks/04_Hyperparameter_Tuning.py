@@ -17,8 +17,11 @@ from tensorflow.keras.optimizers import Adam
 
 from core import processors, models
 
-warnings.filterwarnings("ignore")
+# Menghilangkan log peringatan kompilasi biner TensorFlow
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+# Menghilangkan peringatan depresiasi fungsi dari Python/Pandas
+warnings.filterwarnings("ignore")
 
 # 1. Konfigurasi Jalur Direktori (Directory Paths)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -148,7 +151,7 @@ def eksekusi_grid_search_cnn_lstm():
     print(f"  -> Batch Size    : {terbaik_params.get('batch_size')}") 
     print(f"  -> Dropout Rate  : {terbaik_params.get('dropout')}") 
     print(f"  -> Learning Rate : {terbaik_params.get('lr')}") 
-    print(f"  -> Akurasi Uji Terbaik : {terbaik_accuracy * 100:.2f}%")
+    print(f"  -> Akurasi Uji Terbaik : {terbaik_akurasi * 100:.2f}%")
     print("=" * 55)
     print("LOG: Proses pencarian selesai. Berkas model terbaik siap digunakan.")
 

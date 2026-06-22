@@ -1,0 +1,15 @@
+| Model                  | Sensor      |   Accuracy |   Precision |   Recall |   F1_Score | Keterangan                                                |   Akurasi_Persen |   F1_Score_Persen |
+|:-----------------------|:------------|-----------:|------------:|---------:|-----------:|:----------------------------------------------------------|-----------------:|------------------:|
+| CNN-LSTM + UFR         | PPG Tabular |     0.5056 |      0.5015 |   0.9718 |     0.6615 | Audit Fisik Berkas Model_cnn_lstm_PPG_ufr_Terbaik.keras   |            50.56 |             66.15 |
+| CNN-LSTM + mRMR        | PPG Tabular |     0.5    |      0.4986 |   0.9774 |     0.6603 | Audit Fisik Berkas Model_cnn_lstm_PPG_mrmr_Terbaik.keras  |            50    |             66.03 |
+| LSTM + Attention       | ECG Tabular |     0.6343 |      0.6078 |   0.7209 |     0.6596 | Audit Fisik Berkas Model_lstm_attention_ECG_Terbaik.keras |            63.43 |             65.96 |
+| CNN-LSTM Baseline      | ECG Tabular |     0.64   |      0.6198 |   0.6919 |     0.6538 | Audit Fisik Berkas Model_cnn_lstm_ECG_Terbaik.keras       |            64    |             65.38 |
+| CNN-LSTM Baseline      | PPG Tabular |     0.6517 |      0.6568 |   0.6271 |     0.6416 | Audit Fisik Berkas Model_cnn_lstm_PPG_Terbaik.keras       |            65.17 |             64.16 |
+| LSTM + Attention       | PPG Tabular |     0.6011 |      0.5916 |   0.6384 |     0.6141 | Audit Fisik Berkas Model_lstm_attention_PPG_Terbaik.keras |            60.11 |             61.41 |
+| Fusi Multimodal Expert | ECG+PPG     |     0.5543 |      0.5351 |   0.7093 |     0.61   | Audit Fisik Berkas Model_Multimodal_Fusion_Terbaik.keras  |            55.43 |             61    |
+| CNN-LSTM + mRMR        | ECG Tabular |     0.6029 |      0.6204 |   0.4942 |     0.5502 | Audit Fisik Berkas Model_cnn_lstm_ECG_mrmr_Terbaik.keras  |            60.29 |             55.02 |
+| CNN-LSTM + UFR         | ECG Tabular |     0.6    |      0.6159 |   0.4942 |     0.5484 | Audit Fisik Berkas Model_cnn_lstm_ECG_ufr_Terbaik.keras   |            60    |             54.84 |
+| SVM Baseline           | ECG Tabular |     0.63   |      0.5    |   0.44   |     0.47   | Eksperimen Klasik                                         |            63    |             47    |
+| Random Forest Baseline | ECG Tabular |     0.63   |      0.5    |   0.44   |     0.47   | Eksperimen Klasik                                         |            63    |             47    |
+| Random Forest Baseline | PPG Tabular |     0.62   |      0.49   |   0.43   |     0.46   | Eksperimen Klasik                                         |            62    |             46    |
+| SVM Baseline           | PPG Tabular |     0.61   |      0.48   |   0.42   |     0.45   | Eksperimen Klasik                                         |            61    |             45    |

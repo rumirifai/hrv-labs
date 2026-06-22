@@ -5,10 +5,17 @@ Deskripsi: Membaca raw dataset CLAS, mengekstrak fitur ranah waktu dan frekuensi
 """
 
 import os
+import warnings
 import pandas as pd
 import numpy as np
 import neurokit2 as nk
 from core import loaders
+
+# Menghilangkan log peringatan kompilasi biner TensorFlow
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+# Menghilangkan peringatan depresiasi fungsi dari Python/Pandas
+warnings.filterwarnings("ignore")
 
 # 1. Konfigurasi Jalur Direktori (Directory Paths)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

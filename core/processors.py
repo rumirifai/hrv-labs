@@ -8,7 +8,7 @@ Deskripsi: Menyediakan fungsi analitik untuk pemrosesan sinyal digital (DSP),
 import numpy as np
 import pandas as pd
 from scipy.signal import detrend
-from scipy.feature_selection import SelectKBest, f_classif
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.linear_model import LinearRegression
 
 def inspect_data_balance(y_labels):

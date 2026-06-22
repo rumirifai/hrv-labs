@@ -13,8 +13,18 @@ trash_code/
 venv/
 .venv/
 
-# Mengabaikan file tensor hasil ekstraksi (opsional, disarankan diekstrak ulang di komputer remote)
-data/02_waveform/*.npy
+# --- PERBAIKAN SECARA TOTAL JALUR DATA ---
+# Mengabaikan seluruh isi folder pemrosesan sinyal dan runtun-waktu mentah
+data/02_processed/
+data/02_waveform/
+*.npy
 
-# Mengabaikan model yang tersimpan (opsional, karena model akan dilatih ulang di komputer remote)
-data/03_saved_models/*.keras
+# Mengabaikan seluruh file model fisik biner Keras yang berat
+data/03_saved_models/
+*.keras
+*.h5
+
+# --- PENGECUALIAN AMAN ---
+# Memaksa file database master CSV kecil dan ringkasan MD tetap naik ke GitHub
+!data/01_processed/REKAP_AKURASI_MASTER.csv
+!TABEL_RINGKASAN_SKRIPSI.md
