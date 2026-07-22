@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Penelitian HRV — Deteksi Beban Kognitif</title>
+  <meta name="description"
+    content="Sistem Visualisasi Penelitian: Deteksi Beban Kognitif Mahasiswa berbasis Heart Rate Variability (HRV) menggunakan CNN-LSTM. Skripsi Muhamad Rumi Rifai, UNPAD 2025.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/chart.umd.min.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#" class="site-logo">
+          <div class="logo-icon">🧠</div>
+          <div>
+            <div>HRV Cognitive Load</div>
+            <div class="site-subtitle">Sistem Visualisasi Penelitian</div>
+          </div>
+        </a>
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle-btn" title="Ganti Tema">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+          <span class="header-badge">Model Terbaik: 65,17% Akurasi</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- NAV TABS -->
+    <nav class="nav-tabs">
+      <div class="nav-tabs-inner">
+        <button class="nav-tab active" data-tab="dataset">
+          <span class="tab-icon">🗄️</span>
+          <span class="tab-label">Dataset</span>
+        </button>
+        <button class="nav-tab" data-tab="preprocessing">
+          <span class="tab-icon">📊</span>
+          <span class="tab-label">Preprocessing</span>
+        </button>
+        <button class="nav-tab" data-tab="models">
+          <span class="tab-icon">🏆</span>
+          <span class="tab-label">Semua Model</span>
+        </button>
+        <button class="nav-tab" data-tab="demo">
+          <span class="tab-icon">🔮</span>
+          <span class="tab-label">Demo Prediksi</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- ===================== TAB 1: DATASET ===================== -->
+      <section id="tab-dataset" class="tab-panel active">
+        <div class="section-header">
+          <h1 class="section-title">🗄️ Dataset CLAS</h1>
+          <p class="section-desc">Cognitive Load, Affect, and Stress (CLAS) Dataset — Basis data fisiologis yang
+            digunakan dalam penelitian ini</p>
+        </div>
+
+        <!-- Sensor Switcher -->
+        <div class="filter-bar" style="margin-bottom:1.5rem">
+          <button class="filter-btn active" id="btn-ecg-ds" onclick="loadDataset('ecg')">📡 Sensor ECG</button>
+          <button class="filter-btn" id="btn-ppg-ds" onclick="loadDataset('ppg')">💓 Sensor PPG</button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid-4" id="ds-stats-row" style="margin-bottom:1.2rem">
+          <div class="stat-card"><span class="stat-label">Total Partisipan</span><span class="stat-value">60</span><span
+              class="stat-sub">Mahasiswa CLAS</span></div>
+          <div class="stat-card accent"><span class="stat-label">Total Sampel</span><span class="stat-value"
+              id="ds-total">—</span><span class="stat-sub">Baris dataset</span></div>
+          <div class="stat-card green"><span class="stat-label">Beban Rendah</span><span class="stat-value"
+              id="ds-rendah">—</span><span class="stat-sub">Baseline + Neutral</span></div>
+          <div class="stat-card red"><span class="stat-label">Beban Tinggi</span><span class="stat-value"
+              id="ds-tinggi">—</span><span class="stat-sub">Math / Stroop / IQ Test</span></div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1.2rem">
+          <!-- Distribusi Kelas Chart -->
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Distribusi Kelas Label</div>
+            <div class="chart-box"><canvas id="chart-label-dist"></canvas></div>
+          </div>
+          <!-- Statistik Fitur -->
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Statistik Deskriptif Fitur HRV</div>
+            <div class="table-wrap" id="ds-feat-stats">
+              <p style="color:var(--text-muted);text-align:center;padding:2rem">Memuat data...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Table -->
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>Pratinjau Data (20 Sampel Pertama)</div>
+          <div class="table-wrap">
+            <table id="ds-sample-table">
+              <thead>
+                <tr>
+                  <th>Subjek</th>
+                  <th>Tugas</th>
+                  <th>Label</th>
+                  <th>MeanNN (ms)</th>
+                  <th>SDNN (ms)</th>
+                  <th>RMSSD (ms)</th>
+                  <th>LF</th>
+                  <th>HF</th>
+                  <th>LF/HF</th>
+                </tr>
+              </thead>
+              <tbody id="ds-sample-body">
+                <tr>
+                  <td colspan="9" style="text-align:center;color:var(--text-muted);padding:2rem">Memuat data...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TAB 2: PREPROCESSING ===================== -->
+      <section id="tab-preprocessing" class="tab-panel">
+        <div class="section-header">
+          <h1 class="section-title">📊 Pipeline Preprocessing Sinyal</h1>
+          <p class="section-desc">Visualisasi proses pembersihan dan ekstraksi fitur dari sinyal mentah ECG/PPG</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1.2rem">
+          <!-- Pipeline Diagram (statis) -->
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Diagram Pipeline Pemrosesan</div>
+            <div class="img-gallery" style="grid-template-columns:1fr">
+              <div class="img-card"
+                onclick="openLightbox('/static/img/hasil_filtering_411.png','Visualisasi Pipeline Pemrosesan Sinyal')">
+                <img src="/static/img/hasil_filtering_411.png" alt="Pipeline Pemrosesan Sinyal" loading="lazy">
+                <div class="img-caption">Gambar 4.1–4.2 — Pipeline Pemrosesan Sinyal ECG/PPG</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Segmentasi Sliding Window -->
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Segmentasi Temporal (Sliding Window)</div>
+            <div class="img-gallery" style="grid-template-columns:1fr">
+              <div class="img-card"
+                onclick="openLightbox('/static/img/skema_sliding_window_45.png','Skema Sliding Window')">
+                <img src="/static/img/skema_sliding_window_45.png" alt="Skema Sliding Window" loading="lazy">
+                <div class="img-caption">Gambar 4.5 — Skema Sliding Window (Overlap 50%)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE SIGNAL VIEWER -->
+        <div class="card" style="margin-bottom:1.2rem">
+          <div class="card-title"><span class="dot"></span>🔬 Visualisasi Sinyal Interaktif — Upload File CSV Mentah
+          </div>
+          <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
+            Upload file CSV sinyal mentah dari dataset CLAS (format <code
+              style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">full_gsr_ppg.csv</code> atau
+            <code style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">*_ecg_.csv</code> atau <code
+              style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">*_gsr_ppg_.csv</code>).
+            Sistem akan menjalankan pipeline NeuroKit2 secara otomatis dan menampilkan hasilnya.
+          </p>
+
+          <div class="filter-bar" style="margin-bottom:1rem">
+            <button class="filter-btn active" id="sig-type-ppg" onclick="setSigType('ppg')">💓 PPG Signal</button>
+            <button class="filter-btn" id="sig-type-ecg" onclick="setSigType('ecg')">📡 ECG Signal</button>
+          </div>
+
+          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('signal-file-input').click()">
+            <input type="file" id="signal-file-input" accept=".csv" onchange="handleSignalFile(event)">
+            <div class="upload-icon">📂</div>
+            <div class="upload-title">Klik atau Seret File CSV ke Sini</div>
+            <div class="upload-sub">Format: full_gsr_ppg.csv / *_ecg_.csv dari dataset CLAS<br>Maksimum 60 detik pertama
+              sinyal akan diproses</div>
+          </div>
+
+          <div class="processing-info" id="proc-info">
+            <div class="spinner"></div>
+            <span id="proc-text">Memproses sinyal... Mohon tunggu (~10–20 detik)</span>
+          </div>
+
+          <!-- Signal Viewer Panel -->
+          <div class="signal-panel" id="signal-panel">
+            <div class="signal-meta" id="signal-meta-row"></div>
+
+            <div style="margin-bottom:1rem">
+              <div class="card-title"><span class="dot" style="background:var(--cyan)"></span>Sinyal Mentah vs Sinyal
+                Bersih</div>
+              <div class="chart-box-lg"><canvas id="chart-signal"></canvas></div>
+            </div>
+
+            <!-- Fitur HRV hasil ekstraksi -->
+            <div class="card-title" style="margin-bottom:.8rem"><span class="dot"
+                style="background:var(--green)"></span>Fitur HRV Terekstraksi</div>
+            <div class="grid-3" id="hrv-extracted-grid">
+            </div>
+
+            <div style="margin-top:1rem;display:flex;gap:.8rem;align-items:center">
+              <button class="btn btn-primary" onclick="sendExtractedToDemo()">
+                🔮 Kirim ke Demo Prediksi
+              </button>
+              <span style="font-size:.78rem;color:var(--text-muted)">Fitur yang terekstraksi akan otomatis mengisi form
+                demo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hasil Segmentasi Gambar -->
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>Hasil Segmentasi Waveform (Dari Eksperimen)</div>
+          <div class="img-gallery">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/hasil_segmentasi_ecg_43.png','Hasil Segmentasi ECG')">
+              <img src="/static/img/hasil_segmentasi_ecg_43.png" alt="Segmentasi ECG" loading="lazy">
+              <div class="img-caption">Gambar 4.3 — Segmentasi Temporal Sliding Window ECG</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/hasil_segmentasi_ppg_44.png','Hasil Segmentasi PPG')">
+              <img src="/static/img/hasil_segmentasi_ppg_44.png" alt="Segmentasi PPG" loading="lazy">
+              <div class="img-caption">Gambar 4.4 — Segmentasi Temporal Sliding Window PPG</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TAB 3: SEMUA MODEL ===================== -->
+      <section id="tab-models" class="tab-panel">
+        <div class="section-header">
+          <h1 class="section-title">🏆 Papan Peringkat Semua Model</h1>
+          <p class="section-desc">Komparasi performa seluruh 16 model eksperimen — sortable, filterable</p>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterModels('all',this)">Semua Model</button>
+          <button class="filter-btn" onclick="filterModels('ECG Tabular',this)">ECG Tabular</button>
+          <button class="filter-btn" onclick="filterModels('PPG Tabular',this)">PPG Tabular</button>
+          <button class="filter-btn" onclick="filterModels('ECG Waveform',this)">ECG Waveform</button>
+          <button class="filter-btn" onclick="filterModels('ECG+PPG',this)">Multimodal</button>
+          <button class="filter-btn" onclick="filterModels('SEHAT',this)">✅ Hanya Sehat</button>
+          <button class="filter-btn" onclick="filterModels('ANOMALI',this)">⚠️ Anomali</button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid-4" style="margin-bottom:1.2rem" id="model-summary-cards">
+          <div class="stat-card accent"><span class="stat-label">Total Model</span><span
+              class="stat-value">16</span><span class="stat-sub">Semua eksperimen</span></div>
+          <div class="stat-card green"><span class="stat-label">Model Sehat</span><span class="stat-value"
+              id="cnt-sehat">—</span><span class="stat-sub">Akurasi ≥ 60%</span></div>
+          <div class="stat-card red"><span class="stat-label">Model Anomali</span><span class="stat-value"
+              id="cnt-anomali">—</span><span class="stat-sub">Bias prediksi</span></div>
+          <div class="stat-card"><span class="stat-label">Akurasi Terbaik</span><span class="stat-value"
+              id="best-acc">—</span><span class="stat-sub">Model Rank #1</span></div>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="card" style="margin-bottom:1.2rem">
+          <div class="card-title"><span class="dot"></span>Model Leaderboard</div>
+          <div class="table-wrap">
+            <table id="leaderboard-table">
+              <thead>
+                <tr>
+                  <th onclick="sortTable('rank')">Rank</th>
+                  <th onclick="sortTable('model')">Model</th>
+                  <th onclick="sortTable('sensor')">Sensor</th>
+                  <th onclick="sortTable('accuracy_pct')">Akurasi ↕</th>
+                  <th onclick="sortTable('precision_pct')">Precision</th>
+                  <th onclick="sortTable('recall_pct')">Recall</th>
+                  <th onclick="sortTable('f1_score_pct')">F1-Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body">
+                <tr>
+                  <td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem">Memuat data...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid-2" style="margin-bottom:1.2rem">
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Komparasi Akurasi Semua Model</div>
+            <div class="chart-box-lg"><canvas id="chart-all-accuracy"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model</div>
+            <div class="chart-box"><canvas id="chart-health-dist"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Confusion Matrices -->
+        <div class="card" style="margin-bottom:1.2rem">
+          <div class="card-title"><span class="dot"></span>Confusion Matrix per Model</div>
+          <div class="filter-bar" style="margin-bottom:1rem">
+            <button class="filter-btn active" onclick="showCM('klasik',this)">Model Klasik</button>
+            <button class="filter-btn" onclick="showCM('dl',this)">Deep Learning</button>
+          </div>
+          <div id="cm-klasik" class="img-gallery">
+            <div class="img-card" onclick="openLightbox('/static/img/confusion_matrix_svm.png','Confusion Matrix SVM')">
+              <img src="/static/img/confusion_matrix_svm.png" alt="CM SVM" loading="lazy">
+              <div class="img-caption">Gambar 4.7 — Confusion Matrix SVM (ECG Tabular)</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/confusion_matrix_rf.png','Confusion Matrix Random Forest')">
+              <img src="/static/img/confusion_matrix_rf.png" alt="CM RF" loading="lazy">
+              <div class="img-caption">Gambar 4.8 — Confusion Matrix Random Forest (ECG Tabular)</div>
+            </div>
+          </div>
+          <div id="cm-dl" class="img-gallery" style="display:none">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/confusion_matrix_dl_baseline.png','CM CNN-LSTM Baseline')">
+              <img src="/static/img/confusion_matrix_dl_baseline.png" alt="CM DL Baseline" loading="lazy">
+              <div class="img-caption">Gambar 4.9 — Confusion Matrix CNN-LSTM Baseline</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/training_history_dl_baseline.png','Training History CNN-LSTM Baseline')">
+              <img src="/static/img/training_history_dl_baseline.png" alt="Training History" loading="lazy">
+              <div class="img-caption">Gambar 4.10 — Kurva Pelatihan CNN-LSTM Baseline</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>Analisis Kontribusi Fitur HRV (Subbab 4.5)</div>
+          <div class="img-gallery" style="grid-template-columns: 1fr 1fr">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/kontribusi_fitur_triple_45.png','Kontribusi Fitur Triple Method')">
+              <img src="/static/img/kontribusi_fitur_triple_45.png" alt="Kontribusi Fitur" loading="lazy">
+              <div class="img-caption">Gambar 4.19 — UFR, mRMR & RF Importance (ECG & PPG)</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/radar_kontribusi_fitur_45.png','Radar Chart Kontribusi')">
+              <img src="/static/img/radar_kontribusi_fitur_45.png" alt="Radar Chart" loading="lazy">
+              <div class="img-caption">Gambar 4.21 — Radar Chart Kontribusi Fitur Agregat</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TAB 4: DEMO ===================== -->
+      <section id="tab-demo" class="tab-panel">
+        <div class="section-header">
+          <h1 class="section-title">🔮 Demo Prediksi Model Terbaik</h1>
+          <p class="section-desc">
+            Model: <strong>CNN-LSTM Baseline PPG Tabular</strong> — Rank #1, Akurasi 65,17%<br>
+            Masukkan nilai HRV secara manual atau pilih contoh dari dataset CLAS untuk mendapat prediksi beban kognitif.
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <!-- INPUT PANEL -->
+          <div>
+            <!-- Preset Buttons -->
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-title"><span class="dot"></span>Contoh Data dari Dataset CLAS</div>
+              <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.8rem">
+                Klik salah satu untuk mengisi form secara otomatis dengan data riil dari eksperimen.
+              </p>
+              <div class="preset-row">
+                <button class="btn btn-green btn-sm" onclick="loadPreset('rendah1')">🟢 Beban Rendah #1</button>
+                <button class="btn btn-green btn-sm" onclick="loadPreset('rendah2')">🟢 Beban Rendah #2</button>
+                <button class="btn btn-green btn-sm" onclick="loadPreset('rendah3')">🟢 Beban Rendah #3</button>
+                <button class="btn btn-red btn-sm" onclick="loadPreset('tinggi1')">🔴 Beban Tinggi #1</button>
+                <button class="btn btn-red btn-sm" onclick="loadPreset('tinggi2')">🔴 Beban Tinggi #2</button>
+                <button class="btn btn-outline btn-sm" onclick="loadPreset('mean')">📊 Rata-rata Dataset</button>
+              </div>
+            </div>
+
+            <!-- HRV Sliders -->
+            <div class="card">
+              <div class="card-title"><span class="dot"></span>Input Nilai HRV</div>
+              <div class="hrv-form" id="hrv-form">
+
+                <!-- MeanNN -->
+                <div class="hrv-field">
+                  <div class="hrv-label">
+                    Rata-rata Interval Detak <span class="hrv-label-en">MeanNN</span>
+                    <div class="tooltip-btn">?<div class="tooltip-text">Waktu rata-rata antara dua detak jantung
+                        berurutan (ms). Nilai lebih tinggi = detak lebih lambat = lebih rileks. Rentang normal
+                        istirahat: 600–900 ms.</div>
+                    </div>
+                  </div>
+                  <div class="slider-row">
+                    <input type="range" class="hrv-slider" id="sl-MeanNN_ms" min="398" max="1004" step="1" value="700"
+                      oninput="syncInput('MeanNN_ms')">
+                    <input type="number" class="hrv-num-input" id="in-MeanNN_ms" min="398" max="1004" step="0.1"
+                      value="700" oninput="syncSlider('MeanNN_ms')">
+                    <span style="font-size:.75rem;color:var(--text-muted);width:24px">ms</span>
+                  </div>
+                  <div class="slider-range"><span>398</span><span>1004 ms</span></div>
+                </div>
+
+                <!-- SDNN -->
+                <div class="hrv-field">
+                  <div class="hrv-label">
+                    Variabilitas Total Detak <span class="hrv-label-en">SDNN</span>
+                    <div class="tooltip-btn">?<div class="tooltip-text">Standar deviasi seluruh interval antar-detak
+                        (ms). Nilai lebih tinggi = jantung lebih adaptif. Rendah (<30 ms) bisa mengindikasikan stres
+                          atau kelelahan.</div>
+                      </div>
+                    </div>
+                    <div class="slider-row">
+                      <input type="range" class="hrv-slider" id="sl-SDNN_ms" min="2" max="280" step="0.1" value="54"
+                        oninput="syncInput('SDNN_ms')">
+                      <input type="number" class="hrv-num-input" id="in-SDNN_ms" min="2" max="280" step="0.1" value="54"
+                        oninput="syncSlider('SDNN_ms')">
+                      <span style="font-size:.75rem;color:var(--text-muted);width:24px">ms</span>
+                    </div>
+                    <div class="slider-range"><span>2</span><span>280 ms</span></div>
+                  </div>
+
+                  <!-- RMSSD -->
+                  <div class="hrv-field">
+                    <div class="hrv-label">
+                      Variabilitas Antar-Detak Berturutan <span class="hrv-label-en">RMSSD</span>
+                      <div class="tooltip-btn">?<div class="tooltip-text">Akar rata-rata kuadrat perbedaan antar detak
+                          berurutan (ms). Indikator utama aktivitas parasimpatik. Lebih tinggi = lebih santai. Paling
+                          sensitif terhadap beban kognitif pada data ECG.</div>
+                      </div>
+                    </div>
+                    <div class="slider-row">
+                      <input type="range" class="hrv-slider" id="sl-RMSSD_ms" min="2" max="434" step="0.1" value="69"
+                        oninput="syncInput('RMSSD_ms')">
+                      <input type="number" class="hrv-num-input" id="in-RMSSD_ms" min="2" max="434" step="0.1"
+                        value="69" oninput="syncSlider('RMSSD_ms')">
+                      <span style="font-size:.75rem;color:var(--text-muted);width:24px">ms</span>
+                    </div>
+                    <div class="slider-range"><span>2</span><span>434 ms</span></div>
+                  </div>
+
+                  <!-- LF -->
+                  <div class="hrv-field">
+                    <div class="hrv-label">
+                      Daya Frekuensi Rendah <span class="hrv-label-en">LF Power</span>
+                      <div class="tooltip-btn">?<div class="tooltip-text">Komponen HRV pada frekuensi 0,04–0,15 Hz
+                          (normalized units). Dipengaruhi aktivitas simpatis dan barorefleks. Bisa kosong (—) jika
+                          segmen sinyal terlalu pendek.</div>
+                      </div>
+                    </div>
+                    <div class="slider-row">
+                      <input type="range" class="hrv-slider" id="sl-LF" min="0.001" max="0.065" step="0.001"
+                        value="0.035" oninput="syncInput('LF')">
+                      <input type="number" class="hrv-num-input" id="in-LF" min="0.001" max="0.065" step="0.001"
+                        value="0.035" oninput="syncSlider('LF')">
+                      <span style="font-size:.75rem;color:var(--text-muted);width:24px">nu</span>
+                    </div>
+                    <div class="slider-range"><span>0.001</span><span>0.065 nu</span></div>
+                  </div>
+
+                  <!-- HF -->
+                  <div class="hrv-field">
+                    <div class="hrv-label">
+                      Daya Frekuensi Tinggi <span class="hrv-label-en">HF Power</span>
+                      <div class="tooltip-btn">?<div class="tooltip-text">Komponen HRV pada frekuensi 0,15–0,40 Hz
+                          (normalized units). Refleksi aktivitas vagal & pernapasan. Paling dominan pada data PPG
+                          (Analisis 4.5). Semakin tinggi = semakin rileks.</div>
+                      </div>
+                    </div>
+                    <div class="slider-row">
+                      <input type="range" class="hrv-slider" id="sl-HF" min="0.001" max="0.18" step="0.001"
+                        value="0.060" oninput="syncInput('HF')">
+                      <input type="number" class="hrv-num-input" id="in-HF" min="0.001" max="0.18" step="0.001"
+                        value="0.060" oninput="syncSlider('HF')">
+                      <span style="font-size:.75rem;color:var(--text-muted);width:24px">nu</span>
+                    </div>
+                    <div class="slider-range"><span>0.001</span><span>0.180 nu</span></div>
+                  </div>
+
+                  <!-- LF/HF -->
+                  <div class="hrv-field">
+                    <div class="hrv-label">
+                      Rasio Keseimbangan Saraf Otonom <span class="hrv-label-en">LF/HF Ratio</span>
+                      <div class="tooltip-btn">?<div class="tooltip-text">Perbandingan antara aktivitas simpatis (LF)
+                          dan parasimpatik (HF). Nilai > 2 menunjukkan dominansi simpatis (kondisi stres/terfokus).
+                          Nilai normal istirahat: 0,5–1,5.</div>
+                      </div>
+                    </div>
+                    <div class="slider-row">
+                      <input type="range" class="hrv-slider" id="sl-LF_HF_Ratio" min="0.09" max="4.93" step="0.01"
+                        value="1.10" oninput="syncInput('LF_HF_Ratio')">
+                      <input type="number" class="hrv-num-input" id="in-LF_HF_Ratio" min="0.09" max="4.93" step="0.01"
+                        value="1.10" oninput="syncSlider('LF_HF_Ratio')">
+                      <span style="font-size:.75rem;color:var(--text-muted);width:24px">—</span>
+                    </div>
+                    <div class="slider-range"><span>0.09</span><span>4.93</span></div>
+                  </div>
+
+                </div>
+                <div style="margin-top:1.2rem;display:flex;gap:.8rem;align-items:center">
+                  <button class="btn btn-primary" id="btn-predict" onclick="runPredict()">
+                    🔮 Analisis Beban Kognitif
+                  </button>
+                  <button class="btn btn-outline btn-sm" onclick="resetForm()">↺ Reset</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- RESULT PANEL -->
+            <div>
+              <div class="card" style="margin-bottom:1rem">
+                <div class="card-title"><span class="dot" style="background:var(--green)"></span>Hasil Prediksi Model
+                </div>
+
+                <!-- Placeholder -->
+                <div id="result-placeholder" style="text-align:center;padding:3rem;color:var(--text-muted)">
+                  <div style="font-size:3rem;margin-bottom:.8rem">🧠</div>
+                  <div style="font-weight:500;margin-bottom:.3rem">Menunggu Input</div>
+                  <div style="font-size:.78rem">Isi nilai HRV di sebelah kiri dan klik "Analisis"</div>
+                </div>
+
+                <!-- Results -->
+                <div class="result-panel" id="result-panel">
+                  <div class="result-badge" id="result-badge">
+                    <span class="result-icon" id="result-icon">❓</span>
+                    <div>
+                      <div id="result-label" style="font-size:1.6rem">—</div>
+                      <div id="result-sublabel" style="font-size:.85rem;font-weight:400;opacity:.8">—</div>
+                    </div>
+                  </div>
+
+                  <div class="confidence-bar-wrap">
+                    <div class="confidence-label">Tingkat Keyakinan Model: <strong id="conf-pct">—</strong></div>
+                    <div class="confidence-bar">
+                      <div class="confidence-fill" id="conf-fill" style="width:0%"></div>
+                    </div>
+                  </div>
+
+                  <div class="card-title" style="margin:1rem 0 .5rem"><span class="dot"
+                      style="background:var(--purple)"></span>Kontribusi Fitur (UFR Analisis)</div>
+                  <div class="chart-box-sm"><canvas id="chart-feat-contrib"></canvas></div>
+
+                  <div
+                    style="margin-top:1rem;padding:.9rem;background:var(--bg-input);border-radius:8px;font-size:.8rem;line-height:1.7;color:var(--text-muted)"
+                    id="result-interpretation">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Model Info Card -->
+              <div class="card">
+                <div class="card-title"><span class="dot"></span>Informasi Model</div>
+                <div style="font-size:.8rem;color:var(--text-muted);line-height:1.8">
+                  <div>🏆 <strong style="color:var(--text-main)">CNN-LSTM Baseline PPG Tabular</strong></div>
+                  <div>📊 Akurasi: <strong style="color:var(--green)">65,17%</strong> | F1-Score: <strong
+                      style="color:var(--green)">64,16%</strong></div>
+                  <div>🔢 Input: 6 fitur HRV dari sinyal PPG</div>
+                  <div>🏗️ Arsitektur: CNN → LSTM → Dense(1, sigmoid)</div>
+                  <div>⚖️ Mekanisme: Class Weights (imbalanced dataset)</div>
+                  <div
+                    style="margin-top:.8rem;padding:.6rem;background:var(--red-dim);border-radius:6px;color:var(--red)">
+                    ⚠️ <strong>Disclaimer:</strong> Akurasi model 65,17% — sistem ini bersifat eksperimental dan tidak
+                    dapat menggantikan diagnosis medis profesional.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      Muhamad Rumi Rifai — 140810220026 — Teknik Informatika UNPAD 2025 &nbsp;|&nbsp;
+      Sistem Deteksi Beban Kognitif Mahasiswa berbasis HRV &nbsp;|&nbsp;
+      <a href="https://github.com" style="color:var(--accent);text-decoration:none" target="_blank">GitHub
+        Repository</a>
+    </footer>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</div>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+
+</html>
