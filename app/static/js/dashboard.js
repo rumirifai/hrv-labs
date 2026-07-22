@@ -405,12 +405,16 @@ function renderHealthDistChart(data) {
 }
 
 function showCM(type, btn) {
-  document.querySelectorAll("#tab-models .filter-btn").forEach(function(b) { b.classList.remove("active"); });
-  btn.classList.add("active");
-  var klasik = document.getElementById("cm-klasik");
-  var dl     = document.getElementById("cm-dl");
-  if (klasik) klasik.style.display = type === "klasik" ? "grid" : "none";
-  if (dl)     dl.style.display     = type === "dl"     ? "grid" : "none";
+  if (btn && btn.parentElement) {
+    btn.parentElement.querySelectorAll(".filter-btn").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+  }
+  
+  var cmTypes = ["dl-base", "dl-v2", "dl-v3", "dl-comp"];
+  cmTypes.forEach(function(t) {
+    var el = document.getElementById("cm-" + t);
+    if (el) el.style.display = (type === t) ? "grid" : "none";
+  });
 }
 
 

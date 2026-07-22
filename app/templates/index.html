@@ -131,30 +131,35 @@
       <section id="tab-preprocessing" class="tab-panel">
         <div class="section-header">
           <h1 class="section-title">📊 Pipeline Preprocessing Sinyal</h1>
-          <p class="section-desc">Visualisasi proses pembersihan dan ekstraksi fitur dari sinyal mentah ECG/PPG</p>
+          <p class="section-desc">Visualisasi pembersihan sinyal, segmentasi sliding window, dan ekstraksi fitur (Gambar 4.1–4.5)</p>
         </div>
 
         <div class="grid-2" style="margin-bottom:1.2rem">
-          <!-- Pipeline Diagram (statis) -->
+          <!-- Pipeline Diagram PPG & ECG -->
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Diagram Pipeline Pemrosesan</div>
+            <div class="card-title"><span class="dot"></span>Diagram Pipeline Pemrosesan Sinyal</div>
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
-                onclick="openLightbox('/static/img/hasil_filtering_411.png','Visualisasi Pipeline Pemrosesan Sinyal')">
-                <img src="/static/img/hasil_filtering_411.png" alt="Pipeline Pemrosesan Sinyal" loading="lazy">
-                <div class="img-caption">Gambar 4.1–4.2 — Pipeline Pemrosesan Sinyal ECG/PPG</div>
+                onclick="openLightbox('/static/img/Gambar 4.1 Visualisasi Pipeline Pemrosesan Sinyal PPG.png','Pipeline Sinyal PPG')">
+                <img src="/static/img/Gambar 4.1 Visualisasi Pipeline Pemrosesan Sinyal PPG.png" alt="Pipeline PPG" loading="lazy">
+                <div class="img-caption">Gambar 4.1 — Visualisasi Pipeline Pemrosesan Sinyal PPG</div>
+              </div>
+              <div class="img-card" style="margin-top:0.8rem"
+                onclick="openLightbox('/static/img/Gambar 4.2 Visualisasi Pipeline Pemrosesan Sinyal ECG.png','Pipeline Sinyal ECG')">
+                <img src="/static/img/Gambar 4.2 Visualisasi Pipeline Pemrosesan Sinyal ECG.png" alt="Pipeline ECG" loading="lazy">
+                <div class="img-caption">Gambar 4.2 — Visualisasi Pipeline Pemrosesan Sinyal ECG</div>
               </div>
             </div>
           </div>
 
-          <!-- Segmentasi Sliding Window -->
+          <!-- Skema & Segmentasi Sliding Window -->
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Segmentasi Temporal (Sliding Window)</div>
+            <div class="card-title"><span class="dot"></span>Skema Geometris Sliding Window</div>
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
-                onclick="openLightbox('/static/img/skema_sliding_window_45.png','Skema Sliding Window')">
-                <img src="/static/img/skema_sliding_window_45.png" alt="Skema Sliding Window" loading="lazy">
-                <div class="img-caption">Gambar 4.5 — Skema Sliding Window (Overlap 50%)</div>
+                onclick="openLightbox('/static/img/Gambar 4.5 Skema Pemotongan Geometris Sliding Window (Overlap 50%).png','Skema Sliding Window')">
+                <img src="/static/img/Gambar 4.5 Skema Pemotongan Geometris Sliding Window (Overlap 50%).png" alt="Skema Sliding Window" loading="lazy">
+                <div class="img-caption">Gambar 4.5 — Skema Pemotongan Geometris Sliding Window (Overlap 50%)</div>
               </div>
             </div>
           </div>
@@ -167,8 +172,8 @@
           <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
             Upload file CSV sinyal mentah dari dataset CLAS (format <code
               style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">full_gsr_ppg.csv</code> atau
-            <code style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">*_ecg_.csv</code> atau <code
-              style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">*_gsr_ppg_.csv</code>).
+            <code style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">* _ecg_.csv</code> atau <code
+              style="background:var(--bg-input);padding:.1rem .4rem;border-radius:4px">* _gsr_ppg_.csv</code>).
             Sistem akan menjalankan pipeline NeuroKit2 secara otomatis dan menampilkan hasilnya.
           </p>
 
@@ -181,7 +186,7 @@
             <input type="file" id="signal-file-input" accept=".csv" onchange="handleSignalFile(event)">
             <div class="upload-icon">📂</div>
             <div class="upload-title">Klik atau Seret File CSV ke Sini</div>
-            <div class="upload-sub">Format: full_gsr_ppg.csv / *_ecg_.csv dari dataset CLAS<br>Maksimum 60 detik pertama
+            <div class="upload-sub">Format: full_gsr_ppg.csv / * _ecg_.csv dari dataset CLAS<br>Maksimum 60 detik pertama
               sinyal akan diproses</div>
           </div>
 
@@ -216,19 +221,19 @@
           </div>
         </div>
 
-        <!-- Hasil Segmentasi Gambar -->
+        <!-- Hasil Segmentasi Waveform -->
         <div class="card">
-          <div class="card-title"><span class="dot"></span>Hasil Segmentasi Waveform (Dari Eksperimen)</div>
+          <div class="card-title"><span class="dot"></span>Hasil Segmentasi Waveform (Gambar 4.3 & 4.4)</div>
           <div class="img-gallery">
             <div class="img-card"
-              onclick="openLightbox('/static/img/hasil_segmentasi_ecg_43.png','Hasil Segmentasi ECG')">
-              <img src="/static/img/hasil_segmentasi_ecg_43.png" alt="Segmentasi ECG" loading="lazy">
-              <div class="img-caption">Gambar 4.3 — Segmentasi Temporal Sliding Window ECG</div>
+              onclick="openLightbox('/static/img/Gambar 4.3 Segmentasi Sliding Window pada Isyarat Waveform ECG.png','Hasil Segmentasi ECG')">
+              <img src="/static/img/Gambar 4.3 Segmentasi Sliding Window pada Isyarat Waveform ECG.png" alt="Segmentasi ECG" loading="lazy">
+              <div class="img-caption">Gambar 4.3 — Segmentasi Sliding Window pada Isyarat Waveform ECG</div>
             </div>
             <div class="img-card"
-              onclick="openLightbox('/static/img/hasil_segmentasi_ppg_44.png','Hasil Segmentasi PPG')">
-              <img src="/static/img/hasil_segmentasi_ppg_44.png" alt="Segmentasi PPG" loading="lazy">
-              <div class="img-caption">Gambar 4.4 — Segmentasi Temporal Sliding Window PPG</div>
+              onclick="openLightbox('/static/img/Gambar 4.4 Segmentasi Sliding Window pada Isyarat Waveform PPG.png','Hasil Segmentasi PPG')">
+              <img src="/static/img/Gambar 4.4 Segmentasi Sliding Window pada Isyarat Waveform PPG.png" alt="Segmentasi PPG" loading="lazy">
+              <div class="img-caption">Gambar 4.4 — Segmentasi Sliding Window pada Isyarat Waveform PPG</div>
             </div>
           </div>
         </div>
@@ -290,63 +295,154 @@
           </div>
         </div>
 
-        <!-- Charts Row -->
+        <!-- Leaderboard & Health Status Visualizations (Gambar 4.16, 4.17, 4.18) -->
+        <div class="grid-3" style="margin-bottom:1.2rem">
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Master Leaderboard (Gambar 4.16)</div>
+            <div class="img-gallery" style="grid-template-columns:1fr">
+              <div class="img-card"
+                onclick="openLightbox('/static/img/Gambar 4.16 Model Leaderboard Performa Seluruh Model Eksperimen.png','Master Leaderboard')">
+                <img src="/static/img/Gambar 4.16 Model Leaderboard Performa Seluruh Model Eksperimen.png" alt="Leaderboard" loading="lazy">
+                <div class="img-caption">Gambar 4.16 — Model Leaderboard Performa Seluruh Model Eksperimen</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model (Gambar 4.17)</div>
+            <div class="img-gallery" style="grid-template-columns:1fr">
+              <div class="img-card"
+                onclick="openLightbox('/static/img/Gambar 4.17 Distribusi Status Kesehatan Model pada Data Imbalance.png','Distribusi Kesehatan')">
+                <img src="/static/img/Gambar 4.17 Distribusi Status Kesehatan Model pada Data Imbalance.png" alt="Kesehatan Model" loading="lazy">
+                <div class="img-caption">Gambar 4.17 — Distribusi Status Kesehatan Model pada Data Imbalance</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="dot"></span>Komparasi Studi Terdahulu (Gambar 4.18)</div>
+            <div class="img-gallery" style="grid-template-columns:1fr">
+              <div class="img-card"
+                onclick="openLightbox('/static/img/Gambar 4.18 Komparasi Akurasi Klasifikasi Beban Kognitif.png','Komparasi Studi Terdahulu')">
+                <img src="/static/img/Gambar 4.18 Komparasi Akurasi Klasifikasi Beban Kognitif.png" alt="Studi Terdahulu" loading="lazy">
+                <div class="img-caption">Gambar 4.18 — Komparasi Akurasi Klasifikasi Beban Kognitif</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Charts Row -->
         <div class="grid-2" style="margin-bottom:1.2rem">
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Komparasi Akurasi Semua Model</div>
+            <div class="card-title"><span class="dot"></span>Komparasi Akurasi Semua Model (Interaktif)</div>
             <div class="chart-box-lg"><canvas id="chart-all-accuracy"></canvas></div>
           </div>
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model</div>
+            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model (Interaktif)</div>
             <div class="chart-box"><canvas id="chart-health-dist"></canvas></div>
           </div>
         </div>
 
-        <!-- Confusion Matrices -->
+        <!-- Machine Learning Klasik Visualizations (Gambar 4.6, 4.7, 4.8) -->
         <div class="card" style="margin-bottom:1.2rem">
-          <div class="card-title"><span class="dot"></span>Confusion Matrix per Model</div>
-          <div class="filter-bar" style="margin-bottom:1rem">
-            <button class="filter-btn active" onclick="showCM('klasik',this)">Model Klasik</button>
-            <button class="filter-btn" onclick="showCM('dl',this)">Deep Learning</button>
-          </div>
-          <div id="cm-klasik" class="img-gallery">
-            <div class="img-card" onclick="openLightbox('/static/img/confusion_matrix_svm.png','Confusion Matrix SVM')">
-              <img src="/static/img/confusion_matrix_svm.png" alt="CM SVM" loading="lazy">
-              <div class="img-caption">Gambar 4.7 — Confusion Matrix SVM (ECG Tabular)</div>
+          <div class="card-title"><span class="dot"></span>Evaluasi Model Machine Learning Klasik (Subbab 4.2)</div>
+          <div class="img-gallery" style="grid-template-columns: 1fr 1fr 1fr">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.6 Komparasi Metrik Evaluasi Kuantitatif Model SVM dan RF.png','Evaluasi SVM & RF')">
+              <img src="/static/img/Gambar 4.6 Komparasi Metrik Evaluasi Kuantitatif Model SVM dan RF.png" alt="Evaluasi SVM & RF" loading="lazy">
+              <div class="img-caption">Gambar 4.6 — Metrik Evaluasi SVM & RF</div>
             </div>
             <div class="img-card"
-              onclick="openLightbox('/static/img/confusion_matrix_rf.png','Confusion Matrix Random Forest')">
-              <img src="/static/img/confusion_matrix_rf.png" alt="CM RF" loading="lazy">
-              <div class="img-caption">Gambar 4.8 — Confusion Matrix Random Forest (ECG Tabular)</div>
-            </div>
-          </div>
-          <div id="cm-dl" class="img-gallery" style="display:none">
-            <div class="img-card"
-              onclick="openLightbox('/static/img/confusion_matrix_dl_baseline.png','CM CNN-LSTM Baseline')">
-              <img src="/static/img/confusion_matrix_dl_baseline.png" alt="CM DL Baseline" loading="lazy">
-              <div class="img-caption">Gambar 4.9 — Confusion Matrix CNN-LSTM Baseline</div>
+              onclick="openLightbox('/static/img/Gambar 4.7 Confusion Matrix Model Klasik SVM Tabular.png','Confusion Matrix SVM')">
+              <img src="/static/img/Gambar 4.7 Confusion Matrix Model Klasik SVM Tabular.png" alt="CM SVM" loading="lazy">
+              <div class="img-caption">Gambar 4.7 — Confusion Matrix SVM</div>
             </div>
             <div class="img-card"
-              onclick="openLightbox('/static/img/training_history_dl_baseline.png','Training History CNN-LSTM Baseline')">
-              <img src="/static/img/training_history_dl_baseline.png" alt="Training History" loading="lazy">
-              <div class="img-caption">Gambar 4.10 — Kurva Pelatihan CNN-LSTM Baseline</div>
+              onclick="openLightbox('/static/img/Gambar 4.8 Confusion Matrix Model Klasik Random Forest Tabular.png','Confusion Matrix RF')">
+              <img src="/static/img/Gambar 4.8 Confusion Matrix Model Klasik Random Forest Tabular.png" alt="CM RF" loading="lazy">
+              <div class="img-caption">Gambar 4.8 — Confusion Matrix Random Forest</div>
             </div>
           </div>
         </div>
 
-        <!-- Feature Importance -->
-        <div class="card">
-          <div class="card-title"><span class="dot"></span>Analisis Kontribusi Fitur HRV (Subbab 4.5)</div>
-          <div class="img-gallery" style="grid-template-columns: 1fr 1fr">
+        <!-- Deep Learning Visualizations (Gambar 4.9 - 4.15) -->
+        <div class="card" style="margin-bottom:1.2rem">
+          <div class="card-title"><span class="dot"></span>Evaluasi Model Deep Learning Waveform (Subbab 4.3 & 4.4)</div>
+          <div class="filter-bar" style="margin-bottom:1rem">
+            <button class="filter-btn active" onclick="showCM('dl-base',this)">Baseline (5s)</button>
+            <button class="filter-btn" onclick="showCM('dl-v2',this)">BiLSTM V2 (5s)</button>
+            <button class="filter-btn" onclick="showCM('dl-v3',this)">BiLSTM V3 (10s)</button>
+            <button class="filter-btn" onclick="showCM('dl-comp',this)">Komparasi Arsitektur</button>
+          </div>
+
+          <!-- DL Baseline -->
+          <div id="cm-dl-base" class="img-gallery">
             <div class="img-card"
-              onclick="openLightbox('/static/img/kontribusi_fitur_triple_45.png','Kontribusi Fitur Triple Method')">
-              <img src="/static/img/kontribusi_fitur_triple_45.png" alt="Kontribusi Fitur" loading="lazy">
-              <div class="img-caption">Gambar 4.19 — UFR, mRMR & RF Importance (ECG & PPG)</div>
+              onclick="openLightbox('/static/img/Gambar 4.9 Confusion Matrix CNN-LSTM Baseline (Waveform V2).png','CM CNN-LSTM Baseline')">
+              <img src="/static/img/Gambar 4.9 Confusion Matrix CNN-LSTM Baseline (Waveform V2).png" alt="CM DL Baseline" loading="lazy">
+              <div class="img-caption">Gambar 4.9 — Confusion Matrix CNN-LSTM Baseline</div>
             </div>
             <div class="img-card"
-              onclick="openLightbox('/static/img/radar_kontribusi_fitur_45.png','Radar Chart Kontribusi')">
-              <img src="/static/img/radar_kontribusi_fitur_45.png" alt="Radar Chart" loading="lazy">
-              <div class="img-caption">Gambar 4.21 — Radar Chart Kontribusi Fitur Agregat</div>
+              onclick="openLightbox('/static/img/Gambar 4.10 Kurva Pelatihan CNN-LSTM Baseline.png','Kurva Pelatihan Baseline')">
+              <img src="/static/img/Gambar 4.10 Kurva Pelatihan CNN-LSTM Baseline.png" alt="Kurva Baseline" loading="lazy">
+              <div class="img-caption">Gambar 4.10 — Kurva Pelatihan CNN-LSTM Baseline</div>
+            </div>
+          </div>
+
+          <!-- BiLSTM V2 -->
+          <div id="cm-dl-v2" class="img-gallery" style="display:none">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.11 Confusion Matrix CNN-BiLSTM V2 (Jendela 5 Detik).png','CM BiLSTM V2')">
+              <img src="/static/img/Gambar 4.11 Confusion Matrix CNN-BiLSTM V2 (Jendela 5 Detik).png" alt="CM BiLSTM V2" loading="lazy">
+              <div class="img-caption">Gambar 4.11 — Confusion Matrix BiLSTM V2 (5 Detik)</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.12 Kurva Pelatihan CNN-BiLSTM V2 (Weighted).png','Kurva BiLSTM V2')">
+              <img src="/static/img/Gambar 4.12 Kurva Pelatihan CNN-BiLSTM V2 (Weighted).png" alt="Kurva BiLSTM V2" loading="lazy">
+              <div class="img-caption">Gambar 4.12 — Kurva Pelatihan CNN-BiLSTM V2</div>
+            </div>
+          </div>
+
+          <!-- BiLSTM V3 -->
+          <div id="cm-dl-v3" class="img-gallery" style="display:none">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.13 Confusion Matrix CNN-BiLSTM V3 (Jendela 10 Detik).png','CM BiLSTM V3')">
+              <img src="/static/img/Gambar 4.13 Confusion Matrix CNN-BiLSTM V3 (Jendela 10 Detik).png" alt="CM BiLSTM V3" loading="lazy">
+              <div class="img-caption">Gambar 4.13 — Confusion Matrix BiLSTM V3 (10 Detik)</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.14 Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR Scheduler).png','Kurva BiLSTM V3')">
+              <img src="/static/img/Gambar 4.14 Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR Scheduler).png" alt="Kurva BiLSTM V3" loading="lazy">
+              <div class="img-caption">Gambar 4.14 — Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR)</div>
+            </div>
+          </div>
+
+          <!-- DL Comparison -->
+          <div id="cm-dl-comp" class="img-gallery" style="display:none;grid-template-columns:1fr">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.15 Perbandingan Metrik Performa Antar-Arsitektur Deep Learning.png','Perbandingan Deep Learning')">
+              <img src="/static/img/Gambar 4.15 Perbandingan Metrik Performa Antar-Arsitektur Deep Learning.png" alt="Komparasi Deep Learning" loading="lazy">
+              <div class="img-caption">Gambar 4.15 — Perbandingan Metrik Performa Antar-Arsitektur Deep Learning</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Importance (Gambar 4.19, 4.20, 4.21) -->
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>Analisis Kontribusi Fitur HRV (Subbab 4.5)</div>
+          <div class="img-gallery" style="grid-template-columns: 1fr 1fr 1fr">
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.19 Komparasi Skor Kontribusi Fitur HRV pada ECG dan PPG.png','Kontribusi Fitur Triple Method')">
+              <img src="/static/img/Gambar 4.19 Komparasi Skor Kontribusi Fitur HRV pada ECG dan PPG.png" alt="Kontribusi Fitur" loading="lazy">
+              <div class="img-caption">Gambar 4.19 — UFR, mRMR & RF Importance</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.20 Matriks Korelasi Pearson Antar-Fitur ECG dan PPG.png','Matriks Korelasi Pearson')">
+              <img src="/static/img/Gambar 4.20 Matriks Korelasi Pearson Antar-Fitur ECG dan PPG.png" alt="Matriks Korelasi" loading="lazy">
+              <div class="img-caption">Gambar 4.20 — Matriks Korelasi Pearson</div>
+            </div>
+            <div class="img-card"
+              onclick="openLightbox('/static/img/Gambar 4.21 Radar Chart Kontribusi Fitur HRV Secara Agregat.png','Radar Chart Kontribusi')">
+              <img src="/static/img/Gambar 4.21 Radar Chart Kontribusi Fitur HRV Secara Agregat.png" alt="Radar Chart" loading="lazy">
+              <div class="img-caption">Gambar 4.21 — Radar Chart Kontribusi Agregat</div>
             </div>
           </div>
         </div>
