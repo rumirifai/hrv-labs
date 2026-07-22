@@ -5,9 +5,11 @@
 # Mengabaikan data mentah berukuran besar
 data/00_raw/CLAS/
 
-# Mengabaikan folder sampah eksperimen
+# Mengabaikan folder sampah eksperimen, dokumen skripsi, dan laporan
 trash/
 trash_code/
+Dokumen/
+reports/
 
 # Mengabaikan environment lokal jika Anda membuat venv di komputer lokal
 venv/

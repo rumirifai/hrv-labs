@@ -5,11 +5,131 @@ Deskripsi: Menyediakan fungsi analitik untuk pemrosesan sinyal digital (DSP),
            serta kalkulasi interpretabilitas model White-Box.
 """
 
+import os
+
 import numpy as np
 import pandas as pd
 from scipy.signal import detrend
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.linear_model import LinearRegression
+
+LABEL_RENDAH = "Rendah"
+LABEL_TINGGI = "Tinggi"
+BALANCE_THRESHOLD_PERSEN = 40.0
+
+
+def hitung_distribusi_tabular(path_csv, kolom_label="Label"):
+    """Menghitung distribusi kelas dari dataset fitur statistik hasil ekstraksi CLAS."""
+    df = pd.read_csv(path_csv)
+    counts = df[kolom_label].value_counts()
+    rendah = int(counts.get(LABEL_RENDAH, 0))
+    tinggi = int(counts.get(LABEL_TINGGI, 0))
+    return rendah, tinggi, len(df)
+
+
+def hitung_distribusi_waveform(data_waveform_dir, versi):
+    """Menghitung distribusi kelas dari label waveform (.npy) hasil sliding window."""
+    path_y = os.path.join(data_waveform_dir, f"y_Raw_ECG_{versi}.npy")
+    y = np.load(path_y)
+    unique, counts = np.unique(y, return_counts=True)
+    distribusi = dict(zip(unique.tolist(), counts.tolist()))
+    rendah = int(distribusi.get(0, 0))
+    tinggi = int(distribusi.get(1, 0))
+    return rendah, tinggi, len(y)
+
+
+def hitung_distribusi_multimodal(path_ecg_csv, path_ppg_csv):
+    """Menghitung distribusi kelas dataset hasil inner join fusi ECG+PPG."""
+    from core import loaders
+
+    df = loaders.merge_multimodal_features(path_ecg_csv, path_ppg_csv)
+    counts = df["Label_ECG"].value_counts()
+    rendah = int(counts.get(LABEL_RENDAH, 0))
+    tinggi = int(counts.get(LABEL_TINGGI, 0))
+    return rendah, tinggi, len(df)
+
+
+def format_rasio_kelas(rendah, tinggi):
+    return f"{rendah}:{tinggi}"
+
+
+def tentukan_status_keseimbangan(rendah, tinggi, threshold=BALANCE_THRESHOLD_PERSEN):
+    """Menentukan status Balanced/Imbalanced dari proporsi kelas minoritas."""
+    total = rendah + tinggi
+    if total == 0:
+        return "Unknown", "N/A"
+    min_prop = (min(rendah, tinggi) / total) * 100
+    status = "Balanced" if min_prop >= threshold else "Imbalanced"
+    return status, format_rasio_kelas(rendah, tinggi)
+
+
+def resolve_sumber_dataset(base_dir, sensor, model_name=""):
+    """
+    Memetakan baris eksperimen ke sumber data aktual (CSV/NPY) dan
+    mengembalikan distribusi kelas riil tanpa nilai hardcode.
+    """
+    data_tabular = os.path.join(base_dir, "data", "01_processed")
+    data_waveform = os.path.join(base_dir, "data", "02_waveform")
+    sensor = str(sensor)
+    model_name = str(model_name)
+
+    if sensor == "ECG+PPG" or "Fusi" in model_name:
+        path_ecg = os.path.join(data_tabular, "Dataset_Fitur_ECG_6_Fitur.csv")
+        path_ppg = os.path.join(data_tabular, "Dataset_Fitur_PPG_6_Fitur.csv")
+        if not (os.path.exists(path_ecg) and os.path.exists(path_ppg)):
+            return "Unknown", "N/A", "Multimodal (ECG+PPG)"
+        rendah, tinggi, _ = hitung_distribusi_multimodal(path_ecg, path_ppg)
+        status, ratio = tentukan_status_keseimbangan(rendah, tinggi)
+        return status, ratio, "Multimodal (Inner Join ECG+PPG)"
+
+    if "Waveform" in sensor or "BiLSTM" in model_name or "Hyperparam" in model_name:
+        versi = "V3" if "V3" in model_name else "V2"
+        path_y = os.path.join(data_waveform, f"y_Raw_ECG_{versi}.npy")
+        if not os.path.exists(path_y):
+            return "Unknown", "N/A", f"ECG Waveform {versi}"
+        rendah, tinggi, _ = hitung_distribusi_waveform(data_waveform, versi)
+        status, ratio = tentukan_status_keseimbangan(rendah, tinggi)
+        return status, ratio, f"ECG Waveform {versi}"
+
+    if sensor == "PPG Tabular":
+        path_csv = os.path.join(data_tabular, "Dataset_Fitur_PPG_6_Fitur.csv")
+        sumber = "PPG Tabular"
+    else:
+        path_csv = os.path.join(data_tabular, "Dataset_Fitur_ECG_6_Fitur.csv")
+        sumber = "ECG Tabular"
+
+    if not os.path.exists(path_csv):
+        return "Unknown", "N/A", sumber
+
+    rendah, tinggi, _ = hitung_distribusi_tabular(path_csv)
+    status, ratio = tentukan_status_keseimbangan(rendah, tinggi)
+    return status, ratio, sumber
+
+
+def estimasi_distribusi_prediksi(accuracy, precision, recall, jumlah_rendah, jumlah_tinggi):
+    """
+    Estimasi jumlah prediksi kelas 0 (Rendah) dan 1 (Tinggi) dari metrik biner
+    dan distribusi ground truth pada dataset audit yang sama.
+    """
+    n_total = jumlah_rendah + jumlah_tinggi
+    if n_total == 0:
+        return 0, 0
+
+    tp = recall * jumlah_tinggi
+    fn = max(jumlah_tinggi - tp, 0.0)
+
+    if precision > 0:
+        pred_tinggi = tp / precision
+    else:
+        pred_tinggi = 0.0
+
+    fp = max(pred_tinggi - tp, 0.0)
+    tn = max(jumlah_rendah - fp, 0.0)
+
+    pred_rendah = int(round(tn + fn))
+    pred_tinggi = int(round(tp + fp))
+    return pred_rendah, pred_tinggi
+
 
 def inspect_data_balance(y_labels):
     """
