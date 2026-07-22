@@ -51,25 +51,46 @@ scaler_std  = None
 
 def load_model_and_scaler():
     global model_ppg, scaler_mean, scaler_std
+    if model_ppg is not None and scaler_mean is not None:
+        return
+
     try:
-        from tensorflow.keras.models import load_model
         from sklearn.preprocessing import StandardScaler
         from sklearn.impute import KNNImputer
-
-        model_ppg = load_model(MODEL_PATH, compile=False)
 
         df = pd.read_csv(os.path.join(DATA_DIR, "dataset_ppg.csv"))
         FITUR = ["MeanNN_ms", "SDNN_ms", "RMSSD_ms", "LF", "HF", "LF_HF_Ratio"]
         X = df[FITUR].values
+        y = (df["Label"] == "Tinggi").astype(int).values if "Label" in df.columns else np.zeros(len(df))
+
         imputer = KNNImputer(n_neighbors=5)
         X_imp = imputer.fit_transform(X)
         sc = StandardScaler()
         sc.fit(X_imp)
         scaler_mean = sc.mean_
         scaler_std  = sc.scale_
-        print(f"[OK] Model dan Scaler berhasil dimuat: {MODEL_PATH}")
+
+        # 1. Coba muat model Keras fisik (.keras) jika ada
+        if os.path.exists(MODEL_PATH):
+            try:
+                from tensorflow.keras.models import load_model
+                model_ppg = load_model(MODEL_PATH, compile=False)
+                print(f"[OK] Model Keras dimuat: {MODEL_PATH}")
+                return
+            except Exception as ek:
+                print(f"[WARN] Gagal memuat file Keras: {ek}")
+
+        # 2. Fallback: Inisialisasi model Random Forest ringan pada dataset_ppg.csv
+        from sklearn.ensemble import RandomForestClassifier
+        X_scaled = sc.transform(X_imp)
+        rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight="balanced")
+        rf.fit(X_scaled, y)
+        model_ppg = rf
+        print("[OK] Model Fallback (Random Forest Tabular) berhasil diinisialisasi secara otomatis!")
+
     except Exception as e:
-        print(f"[WARN] Model tidak dapat dimuat: {e}")
+        print(f"[WARN] Inisialisasi model/scaler menemui kendala: {e}")
+
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
@@ -209,9 +230,12 @@ def api_leaderboard():
 def api_predict():
     """Prediksi beban kognitif dari nilai HRV manual."""
     if model_ppg is None:
+        load_model_and_scaler()
+
+    if model_ppg is None:
         return safe_json({"error": "Model belum siap. Restart server dan tunggu beberapa detik."}), 503
 
-    data  = request.get_json()
+    data  = request.get_json() or {}
     FITUR = ["MeanNN_ms", "SDNN_ms", "RMSSD_ms", "LF", "HF", "LF_HF_Ratio"]
 
     try:
@@ -228,11 +252,17 @@ def api_predict():
                 X_raw[0, i] = float(scaler_mean[i])
 
         X_scaled = (X_raw - scaler_mean) / scaler_std
-        X_3d     = X_scaled.reshape(1, 6, 1)
 
-        prob       = float(model_ppg.predict(X_3d, verbose=0).flatten()[0])
+        # Fleksibel: dukung model Scikit-Learn (predict_proba) & Keras (predict)
+        if hasattr(model_ppg, "predict_proba"):
+            prob = float(model_ppg.predict_proba(X_scaled)[0, 1])
+        else:
+            X_3d = X_scaled.reshape(1, 6, 1)
+            prob = float(model_ppg.predict(X_3d, verbose=0).flatten()[0])
+
         label      = "Tinggi" if prob >= 0.5 else "Rendah"
         confidence = prob if prob >= 0.5 else (1 - prob)
+
 
         # UFR weights dari analisis 4.5 (PPG)
         ufr_ppg = {
@@ -347,6 +377,8 @@ def api_process_signal():
 
 
 # ─── Startup ─────────────────────────────────────────────────────────────────
+load_model_and_scaler()
+
 if __name__ == "__main__":
-    load_model_and_scaler()
     app.run(debug=True, host="0.0.0.0", port=5000)
+
