@@ -1,17 +1,17 @@
-Model,Sensor,Accuracy,Precision,Recall,F1_Score,Keterangan,Akurasi_Persen,F1_Score_Persen
-CNN-LSTM Baseline,ECG Tabular,0.64,0.6198,0.6919,0.6538,Audit Fisik Model_cnn_lstm_ECG_Terbaik.keras,64.0,65.38000000000001
-CNN-LSTM + UFR,ECG Tabular,0.6,0.6159,0.4942,0.5484,Audit Fisik Model_cnn_lstm_ECG_ufr_Terbaik.keras,60.0,54.84
-CNN-LSTM + mRMR,ECG Tabular,0.6029,0.6204,0.4942,0.5502,Audit Fisik Model_cnn_lstm_ECG_mrmr_Terbaik.keras,60.29,55.02
-LSTM + Attention,ECG Tabular,0.6343,0.6078,0.7209,0.6596,Audit Fisik Model_lstm_attention_ECG_Terbaik.keras,63.43,65.96
-CNN-LSTM Baseline,PPG Tabular,0.6517,0.6568,0.6271,0.6416,Audit Fisik Model_cnn_lstm_PPG_Terbaik.keras,65.16999999999999,64.16
-CNN-LSTM + UFR,PPG Tabular,0.5056,0.5015,0.9718,0.6615,Audit Fisik Model_cnn_lstm_PPG_ufr_Terbaik.keras,50.56,66.14999999999999
-CNN-LSTM + mRMR,PPG Tabular,0.5,0.4986,0.9774,0.6603,Audit Fisik Model_cnn_lstm_PPG_mrmr_Terbaik.keras,50.0,66.03
-LSTM + Attention,PPG Tabular,0.6011,0.5916,0.6384,0.6141,Audit Fisik Model_lstm_attention_PPG_Terbaik.keras,60.11,61.41
-CNN-BiLSTM V2,ECG Waveform,0.5225,0.5224,1.0,0.6863,Audit Fisik Model_Terbaik_BiLSTM_V2_FullEpoch.keras,52.25,68.63
-CNN-BiLSTM V3,ECG Waveform,0.6487,0.6753,0.6705,0.6729,Audit Fisik Model_Terbaik_BiLSTM_V3_CosineLR.keras,64.87,67.29
-CNN-LSTM Hyperparam Tuned,ECG Waveform,0.6507,0.6263,0.8213,0.7107,Audit Fisik Model_GridSearch_CNNLSTM_Optimal.keras,65.07,71.07
-Fusi Multimodal Expert,ECG+PPG,0.5543,0.5351,0.7093,0.61,Audit Fisik Model_Multimodal_Fusion_Terbaik.keras,55.43,61.0
-SVM Baseline,ECG Tabular,0.63,0.5,0.44,0.47,Eksperimen Klasik,63.0,47.0
-Random Forest Baseline,ECG Tabular,0.63,0.5,0.44,0.47,Eksperimen Klasik,63.0,47.0
-SVM Baseline,PPG Tabular,0.61,0.48,0.42,0.45,Eksperimen Klasik,61.0,45.0
-Random Forest Baseline,PPG Tabular,0.62,0.49,0.43,0.46,Eksperimen Klasik,62.0,46.0
+Model,Sensor,Sumber_Dataset,Kondisi_Awal_Data,Rasio_Kelas_Asli,Mekanisme_Balancing,Accuracy,Precision,Recall,F1_Score
+CNN-LSTM Hyperparam Tuned,ECG Waveform,ECG Waveform V2,Balanced,14177:15501,Tanpa Intervensi / Grid Search (Unweighted),0.6507,0.6263,0.8213,0.7107
+CNN-BiLSTM V2,ECG Waveform,ECG Waveform V2,Balanced,14177:15501,Class Weights (Algorithmic Cost),0.5225,0.5224,1.0000,0.6863
+CNN-BiLSTM V3,ECG Waveform,ECG Waveform V3,Balanced,6528:7629,Class Weights + Cosine LR Scheduler,0.6487,0.6753,0.6705,0.6729
+CNN-LSTM + UFR,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights + Feature Weighting (UFR),0.5056,0.5015,0.9718,0.6615
+CNN-LSTM + mRMR,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights + Feature Weighting (mRMR),0.5000,0.4986,0.9774,0.6603
+LSTM + Attention,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights (Algorithmic Cost),0.6343,0.6078,0.7209,0.6596
+CNN-LSTM Baseline,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights (Algorithmic Cost),0.6400,0.6198,0.6919,0.6538
+CNN-LSTM Baseline,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights (Algorithmic Cost),0.6517,0.6568,0.6271,0.6416
+LSTM + Attention,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights (Algorithmic Cost),0.6011,0.5916,0.6384,0.6141
+Fusi Multimodal Expert,ECG+PPG,Multimodal (Inner Join ECG+PPG),Imbalanced,978:174,Class Weights (Hybrid Context),0.5543,0.5351,0.7093,0.6100
+Random Forest Baseline,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights (Sklearn Balanced),0.6041,0.5982,0.6271,0.6081
+SVM Baseline,PPG Tabular,PPG Tabular,Imbalanced,290:177,Class Weights (Sklearn Balanced),0.5929,0.5976,0.6098,0.5948
+SVM Baseline,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights (Sklearn Balanced),0.5829,0.7500,0.6395,0.5946
+Random Forest Baseline,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights (Sklearn Balanced),0.5886,0.5764,0.5794,0.5740
+CNN-LSTM + mRMR,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights + Feature Weighting (mRMR),0.6029,0.6204,0.4942,0.5502
+CNN-LSTM + UFR,ECG Tabular,ECG Tabular,Imbalanced,290:174,Class Weights + Feature Weighting (UFR),0.6000,0.6159,0.4942,0.5484

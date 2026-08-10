@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Penelitian HRV — Deteksi Beban Kognitif</title>
   <meta name="description"
-    content="Sistem Visualisasi Penelitian: Deteksi Beban Kognitif Mahasiswa berbasis Heart Rate Variability (HRV) menggunakan CNN-LSTM. Skripsi Muhamad Rumi Rifai, UNPAD 2025.">
+    content="Sistem Visualisasi Penelitian: Deteksi Beban Kognitif Mahasiswa berbasis Heart Rate Variability (HRV) menggunakan CNN-LSTM. Skripsi Muhamad Rumi Rifai, UNPAD 2026.">
   <link rel="stylesheet" href="/static/css/style.css">
   <script src="/static/js/chart.umd.min.js"></script>
 </head>
@@ -28,7 +28,7 @@
           <button id="theme-toggle" class="theme-toggle-btn" title="Ganti Tema">
             <span id="theme-toggle-icon">🌙</span>
           </button>
-          <span class="header-badge">Model Terbaik: 65,17% Akurasi</span>
+          <span class="header-badge">Model Terbaik: F1 71,07% / Akurasi 65,07%</span>
         </div>
       </div>
     </header>
@@ -51,6 +51,10 @@
         <button class="nav-tab" data-tab="demo">
           <span class="tab-icon">🔮</span>
           <span class="tab-label">Demo Prediksi</span>
+        </button>
+        <button class="nav-tab" data-tab="credits">
+          <span class="tab-icon">👥</span>
+          <span class="tab-label">Credits</span>
         </button>
       </div>
     </nav>
@@ -131,7 +135,8 @@
       <section id="tab-preprocessing" class="tab-panel">
         <div class="section-header">
           <h1 class="section-title">📊 Pipeline Preprocessing Sinyal</h1>
-          <p class="section-desc">Visualisasi pembersihan sinyal, segmentasi sliding window, dan ekstraksi fitur (Gambar 4.1–4.5)</p>
+          <p class="section-desc">Visualisasi pembersihan sinyal, segmentasi sliding window, dan ekstraksi fitur (Gambar
+            4.1–4.5)</p>
         </div>
 
         <div class="grid-2" style="margin-bottom:1.2rem">
@@ -141,12 +146,14 @@
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
                 onclick="openLightbox('/static/img/Gambar 4.1 Visualisasi Pipeline Pemrosesan Sinyal PPG.png','Pipeline Sinyal PPG')">
-                <img src="/static/img/Gambar 4.1 Visualisasi Pipeline Pemrosesan Sinyal PPG.png" alt="Pipeline PPG" loading="lazy">
+                <img src="/static/img/Gambar 4.1 Visualisasi Pipeline Pemrosesan Sinyal PPG.png" alt="Pipeline PPG"
+                  loading="lazy">
                 <div class="img-caption">Gambar 4.1 — Visualisasi Pipeline Pemrosesan Sinyal PPG</div>
               </div>
               <div class="img-card" style="margin-top:0.8rem"
                 onclick="openLightbox('/static/img/Gambar 4.2 Visualisasi Pipeline Pemrosesan Sinyal ECG.png','Pipeline Sinyal ECG')">
-                <img src="/static/img/Gambar 4.2 Visualisasi Pipeline Pemrosesan Sinyal ECG.png" alt="Pipeline ECG" loading="lazy">
+                <img src="/static/img/Gambar 4.2 Visualisasi Pipeline Pemrosesan Sinyal ECG.png" alt="Pipeline ECG"
+                  loading="lazy">
                 <div class="img-caption">Gambar 4.2 — Visualisasi Pipeline Pemrosesan Sinyal ECG</div>
               </div>
             </div>
@@ -158,7 +165,8 @@
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
                 onclick="openLightbox('/static/img/Gambar 4.5 Skema Pemotongan Geometris Sliding Window (Overlap 50%).png','Skema Sliding Window')">
-                <img src="/static/img/Gambar 4.5 Skema Pemotongan Geometris Sliding Window (Overlap 50%).png" alt="Skema Sliding Window" loading="lazy">
+                <img src="/static/img/Gambar 4.5 Skema Pemotongan Geometris Sliding Window (Overlap 50%).png"
+                  alt="Skema Sliding Window" loading="lazy">
                 <div class="img-caption">Gambar 4.5 — Skema Pemotongan Geometris Sliding Window (Overlap 50%)</div>
               </div>
             </div>
@@ -186,7 +194,8 @@
             <input type="file" id="signal-file-input" accept=".csv" onchange="handleSignalFile(event)">
             <div class="upload-icon">📂</div>
             <div class="upload-title">Klik atau Seret File CSV ke Sini</div>
-            <div class="upload-sub">Format: full_gsr_ppg.csv / * _ecg_.csv dari dataset CLAS<br>Maksimum 60 detik pertama
+            <div class="upload-sub">Format: full_gsr_ppg.csv / * _ecg_.csv dari dataset CLAS<br>Maksimum 60 detik
+              pertama
               sinyal akan diproses</div>
           </div>
 
@@ -227,12 +236,14 @@
           <div class="img-gallery">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.3 Segmentasi Sliding Window pada Isyarat Waveform ECG.png','Hasil Segmentasi ECG')">
-              <img src="/static/img/Gambar 4.3 Segmentasi Sliding Window pada Isyarat Waveform ECG.png" alt="Segmentasi ECG" loading="lazy">
+              <img src="/static/img/Gambar 4.3 Segmentasi Sliding Window pada Isyarat Waveform ECG.png"
+                alt="Segmentasi ECG" loading="lazy">
               <div class="img-caption">Gambar 4.3 — Segmentasi Sliding Window pada Isyarat Waveform ECG</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.4 Segmentasi Sliding Window pada Isyarat Waveform PPG.png','Hasil Segmentasi PPG')">
-              <img src="/static/img/Gambar 4.4 Segmentasi Sliding Window pada Isyarat Waveform PPG.png" alt="Segmentasi PPG" loading="lazy">
+              <img src="/static/img/Gambar 4.4 Segmentasi Sliding Window pada Isyarat Waveform PPG.png"
+                alt="Segmentasi PPG" loading="lazy">
               <div class="img-caption">Gambar 4.4 — Segmentasi Sliding Window pada Isyarat Waveform PPG</div>
             </div>
           </div>
@@ -243,7 +254,7 @@
       <section id="tab-models" class="tab-panel">
         <div class="section-header">
           <h1 class="section-title">🏆 Papan Peringkat Semua Model</h1>
-          <p class="section-desc">Komparasi performa seluruh 16 model eksperimen — sortable, filterable</p>
+          <p class="section-desc">Komparasi performa 16 model eksperimen berdasarkan standar <em>F1-Score First</em> (IEEE/Elsevier)</p>
         </div>
 
         <!-- Filter -->
@@ -253,67 +264,69 @@
           <button class="filter-btn" onclick="filterModels('PPG Tabular',this)">PPG Tabular</button>
           <button class="filter-btn" onclick="filterModels('ECG Waveform',this)">ECG Waveform</button>
           <button class="filter-btn" onclick="filterModels('ECG+PPG',this)">Multimodal</button>
-          <button class="filter-btn" onclick="filterModels('SEHAT',this)">✅ Hanya Sehat</button>
-          <button class="filter-btn" onclick="filterModels('ANOMALI',this)">⚠️ Anomali</button>
         </div>
 
         <!-- Summary Cards -->
         <div class="grid-4" style="margin-bottom:1.2rem" id="model-summary-cards">
-          <div class="stat-card accent"><span class="stat-label">Total Model</span><span
-              class="stat-value">16</span><span class="stat-sub">Semua eksperimen</span></div>
-          <div class="stat-card green"><span class="stat-label">Model Sehat</span><span class="stat-value"
-              id="cnt-sehat">—</span><span class="stat-sub">Akurasi ≥ 60%</span></div>
-          <div class="stat-card red"><span class="stat-label">Model Anomali</span><span class="stat-value"
-              id="cnt-anomali">—</span><span class="stat-sub">Bias prediksi</span></div>
-          <div class="stat-card"><span class="stat-label">Akurasi Terbaik</span><span class="stat-value"
-              id="best-acc">—</span><span class="stat-sub">Model Rank #1</span></div>
+          <div class="stat-card accent">
+            <span class="stat-label">Total Model</span>
+            <span class="stat-value">16</span>
+            <span class="stat-sub">Semua eksperimen</span>
+          </div>
+          <div class="stat-card green">
+            <span class="stat-label">F1-Score Terbaik</span>
+            <span class="stat-value" id="best-f1">71,07%</span>
+            <span class="stat-sub">CNN-LSTM Tuned V2</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Akurasi Terbaik</span>
+            <span class="stat-value" id="best-acc">65,07%</span>
+            <span class="stat-sub">CNN-LSTM Tuned V2</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Modalitas Sensor</span>
+            <span class="stat-value" style="font-size:1.8rem">ECG + PPG</span>
+            <span class="stat-sub">Tabular & Waveform</span>
+          </div>
         </div>
 
         <!-- Leaderboard Table -->
         <div class="card" style="margin-bottom:1.2rem">
-          <div class="card-title"><span class="dot"></span>Model Leaderboard</div>
+          <div class="card-title"><span class="dot"></span>Model Leaderboard (F1-Score First)</div>
           <div class="table-wrap">
             <table id="leaderboard-table">
               <thead>
                 <tr>
-                  <th onclick="sortTable('rank')">Rank</th>
-                  <th onclick="sortTable('model')">Model</th>
-                  <th onclick="sortTable('sensor')">Sensor</th>
+                  <th onclick="sortTable('rank')">Rank ↕</th>
+                  <th onclick="sortTable('model')">Model ↕</th>
+                  <th onclick="sortTable('sensor')">Sensor ↕</th>
+                  <th onclick="sortTable('sumber_dataset')">Sumber Dataset ↕</th>
+                  <th onclick="sortTable('mekanisme_balancing')">Mekanisme Balancing ↕</th>
                   <th onclick="sortTable('accuracy_pct')">Akurasi ↕</th>
-                  <th onclick="sortTable('precision_pct')">Precision</th>
-                  <th onclick="sortTable('recall_pct')">Recall</th>
-                  <th onclick="sortTable('f1_score_pct')">F1-Score</th>
-                  <th>Status</th>
+                  <th onclick="sortTable('precision_pct')">Precision ↕</th>
+                  <th onclick="sortTable('recall_pct')">Recall ↕</th>
+                  <th onclick="sortTable('f1_score_pct')">F1-Score ↕</th>
                 </tr>
               </thead>
               <tbody id="leaderboard-body">
                 <tr>
-                  <td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem">Memuat data...</td>
+                  <td colspan="9" style="text-align:center;color:var(--text-muted);padding:2rem">Memuat data...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Leaderboard & Health Status Visualizations (Gambar 4.16, 4.17, 4.18) -->
-        <div class="grid-3" style="margin-bottom:1.2rem">
+        <!-- Leaderboard & Visualizations -->
+        <div class="grid-2" style="margin-bottom:1.2rem">
           <div class="card">
             <div class="card-title"><span class="dot"></span>Master Leaderboard (Gambar 4.16)</div>
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
                 onclick="openLightbox('/static/img/Gambar 4.16 Model Leaderboard Performa Seluruh Model Eksperimen.png','Master Leaderboard')">
-                <img src="/static/img/Gambar 4.16 Model Leaderboard Performa Seluruh Model Eksperimen.png" alt="Leaderboard" loading="lazy">
+                <img src="/static/img/Gambar 4.16 Model Leaderboard Performa Seluruh Model Eksperimen.png"
+                  alt="Leaderboard" loading="lazy">
                 <div class="img-caption">Gambar 4.16 — Model Leaderboard Performa Seluruh Model Eksperimen</div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model (Gambar 4.17)</div>
-            <div class="img-gallery" style="grid-template-columns:1fr">
-              <div class="img-card"
-                onclick="openLightbox('/static/img/Gambar 4.17 Distribusi Status Kesehatan Model pada Data Imbalance.png','Distribusi Kesehatan')">
-                <img src="/static/img/Gambar 4.17 Distribusi Status Kesehatan Model pada Data Imbalance.png" alt="Kesehatan Model" loading="lazy">
-                <div class="img-caption">Gambar 4.17 — Distribusi Status Kesehatan Model pada Data Imbalance</div>
               </div>
             </div>
           </div>
@@ -322,7 +335,8 @@
             <div class="img-gallery" style="grid-template-columns:1fr">
               <div class="img-card"
                 onclick="openLightbox('/static/img/Gambar 4.18 Komparasi Akurasi Klasifikasi Beban Kognitif.png','Komparasi Studi Terdahulu')">
-                <img src="/static/img/Gambar 4.18 Komparasi Akurasi Klasifikasi Beban Kognitif.png" alt="Studi Terdahulu" loading="lazy">
+                <img src="/static/img/Gambar 4.18 Komparasi Akurasi Klasifikasi Beban Kognitif.png"
+                  alt="Studi Terdahulu" loading="lazy">
                 <div class="img-caption">Gambar 4.18 — Komparasi Akurasi Klasifikasi Beban Kognitif</div>
               </div>
             </div>
@@ -332,12 +346,12 @@
         <!-- Interactive Charts Row -->
         <div class="grid-2" style="margin-bottom:1.2rem">
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Komparasi Akurasi Semua Model (Interaktif)</div>
-            <div class="chart-box-lg"><canvas id="chart-all-accuracy"></canvas></div>
+            <div class="card-title"><span class="dot"></span>Komparasi F1-Score Semua Model (Interaktif)</div>
+            <div class="chart-box-lg"><canvas id="chart-all-f1"></canvas></div>
           </div>
           <div class="card">
-            <div class="card-title"><span class="dot"></span>Distribusi Kesehatan Model (Interaktif)</div>
-            <div class="chart-box"><canvas id="chart-health-dist"></canvas></div>
+            <div class="card-title"><span class="dot"></span>Komparasi Akurasi Semua Model (Interaktif)</div>
+            <div class="chart-box-lg"><canvas id="chart-all-accuracy"></canvas></div>
           </div>
         </div>
 
@@ -347,17 +361,20 @@
           <div class="img-gallery" style="grid-template-columns: 1fr 1fr 1fr">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.6 Komparasi Metrik Evaluasi Kuantitatif Model SVM dan RF.png','Evaluasi SVM & RF')">
-              <img src="/static/img/Gambar 4.6 Komparasi Metrik Evaluasi Kuantitatif Model SVM dan RF.png" alt="Evaluasi SVM & RF" loading="lazy">
+              <img src="/static/img/Gambar 4.6 Komparasi Metrik Evaluasi Kuantitatif Model SVM dan RF.png"
+                alt="Evaluasi SVM & RF" loading="lazy">
               <div class="img-caption">Gambar 4.6 — Metrik Evaluasi SVM & RF</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.7 Confusion Matrix Model Klasik SVM Tabular.png','Confusion Matrix SVM')">
-              <img src="/static/img/Gambar 4.7 Confusion Matrix Model Klasik SVM Tabular.png" alt="CM SVM" loading="lazy">
+              <img src="/static/img/Gambar 4.7 Confusion Matrix Model Klasik SVM Tabular.png" alt="CM SVM"
+                loading="lazy">
               <div class="img-caption">Gambar 4.7 — Confusion Matrix SVM</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.8 Confusion Matrix Model Klasik Random Forest Tabular.png','Confusion Matrix RF')">
-              <img src="/static/img/Gambar 4.8 Confusion Matrix Model Klasik Random Forest Tabular.png" alt="CM RF" loading="lazy">
+              <img src="/static/img/Gambar 4.8 Confusion Matrix Model Klasik Random Forest Tabular.png" alt="CM RF"
+                loading="lazy">
               <div class="img-caption">Gambar 4.8 — Confusion Matrix Random Forest</div>
             </div>
           </div>
@@ -365,7 +382,8 @@
 
         <!-- Deep Learning Visualizations (Gambar 4.9 - 4.15) -->
         <div class="card" style="margin-bottom:1.2rem">
-          <div class="card-title"><span class="dot"></span>Evaluasi Model Deep Learning Waveform (Subbab 4.3 & 4.4)</div>
+          <div class="card-title"><span class="dot"></span>Evaluasi Model Deep Learning Waveform (Subbab 4.3 & 4.4)
+          </div>
           <div class="filter-bar" style="margin-bottom:1rem">
             <button class="filter-btn active" onclick="showCM('dl-base',this)">Baseline (5s)</button>
             <button class="filter-btn" onclick="showCM('dl-v2',this)">BiLSTM V2 (5s)</button>
@@ -377,12 +395,14 @@
           <div id="cm-dl-base" class="img-gallery">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.9 Confusion Matrix CNN-LSTM Baseline (Waveform V2).png','CM CNN-LSTM Baseline')">
-              <img src="/static/img/Gambar 4.9 Confusion Matrix CNN-LSTM Baseline (Waveform V2).png" alt="CM DL Baseline" loading="lazy">
+              <img src="/static/img/Gambar 4.9 Confusion Matrix CNN-LSTM Baseline (Waveform V2).png"
+                alt="CM DL Baseline" loading="lazy">
               <div class="img-caption">Gambar 4.9 — Confusion Matrix CNN-LSTM Baseline</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.10 Kurva Pelatihan CNN-LSTM Baseline.png','Kurva Pelatihan Baseline')">
-              <img src="/static/img/Gambar 4.10 Kurva Pelatihan CNN-LSTM Baseline.png" alt="Kurva Baseline" loading="lazy">
+              <img src="/static/img/Gambar 4.10 Kurva Pelatihan CNN-LSTM Baseline.png" alt="Kurva Baseline"
+                loading="lazy">
               <div class="img-caption">Gambar 4.10 — Kurva Pelatihan CNN-LSTM Baseline</div>
             </div>
           </div>
@@ -391,12 +411,14 @@
           <div id="cm-dl-v2" class="img-gallery" style="display:none">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.11 Confusion Matrix CNN-BiLSTM V2 (Jendela 5 Detik).png','CM BiLSTM V2')">
-              <img src="/static/img/Gambar 4.11 Confusion Matrix CNN-BiLSTM V2 (Jendela 5 Detik).png" alt="CM BiLSTM V2" loading="lazy">
+              <img src="/static/img/Gambar 4.11 Confusion Matrix CNN-BiLSTM V2 (Jendela 5 Detik).png" alt="CM BiLSTM V2"
+                loading="lazy">
               <div class="img-caption">Gambar 4.11 — Confusion Matrix BiLSTM V2 (5 Detik)</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.12 Kurva Pelatihan CNN-BiLSTM V2 (Weighted).png','Kurva BiLSTM V2')">
-              <img src="/static/img/Gambar 4.12 Kurva Pelatihan CNN-BiLSTM V2 (Weighted).png" alt="Kurva BiLSTM V2" loading="lazy">
+              <img src="/static/img/Gambar 4.12 Kurva Pelatihan CNN-BiLSTM V2 (Weighted).png" alt="Kurva BiLSTM V2"
+                loading="lazy">
               <div class="img-caption">Gambar 4.12 — Kurva Pelatihan CNN-BiLSTM V2</div>
             </div>
           </div>
@@ -405,12 +427,14 @@
           <div id="cm-dl-v3" class="img-gallery" style="display:none">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.13 Confusion Matrix CNN-BiLSTM V3 (Jendela 10 Detik).png','CM BiLSTM V3')">
-              <img src="/static/img/Gambar 4.13 Confusion Matrix CNN-BiLSTM V3 (Jendela 10 Detik).png" alt="CM BiLSTM V3" loading="lazy">
+              <img src="/static/img/Gambar 4.13 Confusion Matrix CNN-BiLSTM V3 (Jendela 10 Detik).png"
+                alt="CM BiLSTM V3" loading="lazy">
               <div class="img-caption">Gambar 4.13 — Confusion Matrix BiLSTM V3 (10 Detik)</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.14 Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR Scheduler).png','Kurva BiLSTM V3')">
-              <img src="/static/img/Gambar 4.14 Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR Scheduler).png" alt="Kurva BiLSTM V3" loading="lazy">
+              <img src="/static/img/Gambar 4.14 Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR Scheduler).png"
+                alt="Kurva BiLSTM V3" loading="lazy">
               <div class="img-caption">Gambar 4.14 — Kurva Pelatihan CNN-BiLSTM V3 (Cosine LR)</div>
             </div>
           </div>
@@ -419,7 +443,8 @@
           <div id="cm-dl-comp" class="img-gallery" style="display:none;grid-template-columns:1fr">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.15 Perbandingan Metrik Performa Antar-Arsitektur Deep Learning.png','Perbandingan Deep Learning')">
-              <img src="/static/img/Gambar 4.15 Perbandingan Metrik Performa Antar-Arsitektur Deep Learning.png" alt="Komparasi Deep Learning" loading="lazy">
+              <img src="/static/img/Gambar 4.15 Perbandingan Metrik Performa Antar-Arsitektur Deep Learning.png"
+                alt="Komparasi Deep Learning" loading="lazy">
               <div class="img-caption">Gambar 4.15 — Perbandingan Metrik Performa Antar-Arsitektur Deep Learning</div>
             </div>
           </div>
@@ -431,17 +456,20 @@
           <div class="img-gallery" style="grid-template-columns: 1fr 1fr 1fr">
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.19 Komparasi Skor Kontribusi Fitur HRV pada ECG dan PPG.png','Kontribusi Fitur Triple Method')">
-              <img src="/static/img/Gambar 4.19 Komparasi Skor Kontribusi Fitur HRV pada ECG dan PPG.png" alt="Kontribusi Fitur" loading="lazy">
+              <img src="/static/img/Gambar 4.19 Komparasi Skor Kontribusi Fitur HRV pada ECG dan PPG.png"
+                alt="Kontribusi Fitur" loading="lazy">
               <div class="img-caption">Gambar 4.19 — UFR, mRMR & RF Importance</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.20 Matriks Korelasi Pearson Antar-Fitur ECG dan PPG.png','Matriks Korelasi Pearson')">
-              <img src="/static/img/Gambar 4.20 Matriks Korelasi Pearson Antar-Fitur ECG dan PPG.png" alt="Matriks Korelasi" loading="lazy">
+              <img src="/static/img/Gambar 4.20 Matriks Korelasi Pearson Antar-Fitur ECG dan PPG.png"
+                alt="Matriks Korelasi" loading="lazy">
               <div class="img-caption">Gambar 4.20 — Matriks Korelasi Pearson</div>
             </div>
             <div class="img-card"
               onclick="openLightbox('/static/img/Gambar 4.21 Radar Chart Kontribusi Fitur HRV Secara Agregat.png','Radar Chart Kontribusi')">
-              <img src="/static/img/Gambar 4.21 Radar Chart Kontribusi Fitur HRV Secara Agregat.png" alt="Radar Chart" loading="lazy">
+              <img src="/static/img/Gambar 4.21 Radar Chart Kontribusi Fitur HRV Secara Agregat.png" alt="Radar Chart"
+                loading="lazy">
               <div class="img-caption">Gambar 4.21 — Radar Chart Kontribusi Agregat</div>
             </div>
           </div>
@@ -451,9 +479,9 @@
       <!-- ===================== TAB 4: DEMO ===================== -->
       <section id="tab-demo" class="tab-panel">
         <div class="section-header">
-          <h1 class="section-title">🔮 Demo Prediksi Model Terbaik</h1>
+          <h1 class="section-title">🔮 Demo Prediksi Model Tabular Terbaik</h1>
           <p class="section-desc">
-            Model: <strong>CNN-LSTM Baseline PPG Tabular</strong> — Rank #1, Akurasi 65,17%<br>
+            Model Inferensi: <strong>CNN-LSTM Baseline PPG Tabular</strong> — Akurasi 65,17%, F1-Score 64,16% (Model Tabular Terbaik)<br>
             Masukkan nilai HRV secara manual atau pilih contoh dari dataset CLAS untuk mendapat prediksi beban kognitif.
           </p>
         </div>
@@ -649,7 +677,7 @@
 
               <!-- Model Info Card -->
               <div class="card">
-                <div class="card-title"><span class="dot"></span>Informasi Model</div>
+                <div class="card-title"><span class="dot"></span>Informasi Model Inferensi Demo</div>
                 <div style="font-size:.8rem;color:var(--text-muted);line-height:1.8">
                   <div>🏆 <strong style="color:var(--text-main)">CNN-LSTM Baseline PPG Tabular</strong></div>
                   <div>📊 Akurasi: <strong style="color:var(--green)">65,17%</strong> | F1-Score: <strong
@@ -668,13 +696,80 @@
           </div>
       </section>
 
+      <!-- ===================== TAB 5: CREDITS ===================== -->
+      <section id="tab-credits" class="tab-panel">
+        <div class="section-header">
+          <h1 class="section-title">👥 Credits & Tim Penelitian</h1>
+          <p class="section-desc">Informasi resmi peneliti, tim dosen pembimbing, dan institusi pengembang sistem</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1.5rem">
+          <!-- Peneliti Utama -->
+          <div class="card" style="border-left: 4px solid var(--accent)">
+            <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Peneliti Utama (Mahasiswa)</div>
+            <div style="padding:0.4rem 0">
+              <div style="font-size:1.35rem;font-weight:700;color:var(--text-main);margin-bottom:0.2rem">Muhamad Rumi Rifai</div>
+              <div style="font-size:0.95rem;color:var(--accent);font-weight:600;margin-bottom:0.8rem">NPM: 140810220026</div>
+              <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7">
+                Program Studi S-1 Teknik Informatika<br>
+                Fakultas Matematika dan Ilmu Pengetahuan Alam (FMIPA)<br>
+                Universitas Padjadjaran (2026)
+              </p>
+            </div>
+          </div>
+
+          <!-- Tim Dosen Pembimbing -->
+          <div class="card" style="border-left: 4px solid var(--green)">
+            <div class="card-title"><span class="dot" style="background:var(--green)"></span>Tim Dosen Pembimbing</div>
+            <div style="padding:0.4rem 0;display:flex;flex-direction:column;gap:0.9rem">
+              <div>
+                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.2rem">Pembimbing Utama</div>
+                <div style="font-size:1.1rem;font-weight:700;color:var(--text-main)">Dr. Mira Suryani, S.Pd., M.Kom.</div>
+                <div style="font-size:0.82rem;color:var(--text-muted)">NIP. 19891230 201504 2 001</div>
+              </div>
+              <div style="border-top:1px solid var(--border);padding-top:0.7rem">
+                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.2rem">Co. Pembimbing</div>
+                <div style="font-size:1.1rem;font-weight:700;color:var(--text-main)">Dr. Juli Rejito, M.Kom.</div>
+                <div style="font-size:0.82rem;color:var(--text-muted)">NIP. 19680717 199303 1 003</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Detail Card -->
+        <div class="card" style="margin-bottom:1.5rem">
+          <div class="card-title"><span class="dot"></span>Informasi Penelitian Skripsi</div>
+          <div style="font-size:0.9rem;line-height:1.8;color:var(--text-main)">
+            <div style="margin-bottom:1rem">
+              <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem">Judul Skripsi Resmi:</div>
+              <div style="font-size:1.1rem;font-weight:600;color:var(--accent);line-height:1.5">
+                KLASIFIKASI BEBAN KOGNITIF PADA PEMBELAJARAN DARING BERBASIS SENSOR DETAK JANTUNG MENGGUNAKAN CONVOLUTIONAL NEURAL NETWORK-LONG SHORT-TERM MEMORY
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;margin-top:1rem">
+              <div style="background:var(--bg-input);padding:1rem;border-radius:8px;border:1px solid var(--border)">
+                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase">Laboratorium Pengembang</div>
+                <div style="font-weight:600;margin-top:0.3rem">Laboratorium Human Computer Interaction (HCI)</div>
+                <div style="font-size:0.85rem;color:var(--text-muted)">Departemen Ilmu Komputer / S-1 Teknik Informatika UNPAD</div>
+              </div>
+              <div style="background:var(--bg-input);padding:1rem;border-radius:8px;border:1px solid var(--border)">
+                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase">Repositori Source Code</div>
+                <div style="font-weight:600;margin-top:0.3rem">GitHub Public Repository</div>
+                <a href="https://github.com/rumirifai/hrv-labs" target="_blank" style="font-size:0.85rem;color:var(--accent);text-decoration:none">https://github.com/rumirifai/hrv-labs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- FOOTER -->
     <footer class="site-footer">
-      Muhamad Rumi Rifai — 140810220026 — Teknik Informatika UNPAD 2025 &nbsp;|&nbsp;
+      Muhamad Rumi Rifai — 140810220026 — Teknik Informatika UNPAD 2026 &nbsp;|&nbsp;
       Sistem Deteksi Beban Kognitif Mahasiswa berbasis HRV &nbsp;|&nbsp;
-      <a href="https://github.com" style="color:var(--accent);text-decoration:none" target="_blank">GitHub
+      <a href="https://github.com/rumirifai/hrv-labs" style="color:var(--accent);text-decoration:none" target="_blank">GitHub
         Repository</a>
     </footer>
   </div>

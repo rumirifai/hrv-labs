@@ -10,6 +10,7 @@ trash/
 trash_code/
 Dokumen/
 reports/
+revisi_semhas/
 
 # Mengabaikan environment lokal jika Anda membuat venv di komputer lokal
 venv/

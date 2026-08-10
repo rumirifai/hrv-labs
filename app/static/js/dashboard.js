@@ -15,7 +15,7 @@
 let leaderboardData   = [];
 let labelDistChart    = null;
 let allAccuracyChart  = null;
-let healthDistChart   = null;
+let allF1Chart        = null;
 let signalChart       = null;
 let featContribChart  = null;
 let currentSensor     = "ecg";
@@ -79,9 +79,9 @@ document.addEventListener("DOMContentLoaded", function() {
       allAccuracyChart.options.scales.x.grid.color = gridColor;
       allAccuracyChart.update();
     }
-    if (healthDistChart) {
-      healthDistChart.options.plugins.legend.labels.color = textColor;
-      healthDistChart.update();
+    if (allF1Chart) {
+      allF1Chart.options.scales.x.grid.color = gridColor;
+      allF1Chart.update();
     }
     if (signalChart) {
       signalChart.options.scales.x.grid.color = gridColor;
@@ -274,7 +274,7 @@ function renderSampleTable(rows) {
 
 
 // ══════════════════════════════════════════════════════════
-//  LEADERBOARD TAB
+//  LEADERBOARD TAB (F1-SCORE FIRST)
 // ══════════════════════════════════════════════════════════
 
 function loadLeaderboard() {
@@ -286,8 +286,8 @@ function loadLeaderboard() {
     .then(function(data) {
       leaderboardData = data;
       updateLeaderboard(data);
+      renderAllF1Chart(data);
       renderAllAccuracyChart(data);
-      renderHealthDistChart(data);
     })
     .catch(function(err) {
       showError("Gagal memuat leaderboard: " + err.message);
@@ -295,21 +295,18 @@ function loadLeaderboard() {
 }
 
 function updateLeaderboard(data) {
-  var sehat   = data.filter(function(m) { return m.status === "SEHAT"; }).length;
-  var anomali = data.filter(function(m) { return m.status === "ANOMALI"; }).length;
-  var best    = Math.max.apply(null, data.map(function(m) { return m.accuracy_pct; }));
+  var bestF1 = Math.max.apply(null, data.map(function(m) { return m.f1_score_pct; }));
+  var bestAcc = Math.max.apply(null, data.map(function(m) { return m.accuracy_pct; }));
 
-  var elSehat   = document.getElementById("cnt-sehat");
-  var elAnomali = document.getElementById("cnt-anomali");
-  var elBest    = document.getElementById("best-acc");
-  if (elSehat)   elSehat.textContent   = sehat;
-  if (elAnomali) elAnomali.textContent = anomali;
-  if (elBest)    elBest.textContent    = isFinite(best) ? best.toFixed(2) + "%" : "—";
+  var elBestF1 = document.getElementById("best-f1");
+  var elBestAcc = document.getElementById("best-acc");
+  if (elBestF1) elBestF1.textContent = isFinite(bestF1) ? bestF1.toFixed(2) + "%" : "—";
+  if (elBestAcc) elBestAcc.textContent = isFinite(bestAcc) ? bestAcc.toFixed(2) + "%" : "—";
 
   var tbody = document.getElementById("leaderboard-body");
   if (!tbody) return;
   if (!data || data.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='8' style='text-align:center;padding:2rem'>Tidak ada data</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='9' style='text-align:center;padding:2rem'>Tidak ada data</td></tr>";
     return;
   }
 
@@ -317,24 +314,25 @@ function updateLeaderboard(data) {
   for (var i = 0; i < data.length; i++) {
     var m = data[i];
     var rankClass = m.rank === 1 ? "gold" : m.rank === 2 ? "silver" : m.rank === 3 ? "bronze" : "";
-    var statusBadge = m.status === "SEHAT"
-      ? "<span class='badge badge-green'>✅ SEHAT</span>"
-      : m.status === "ANOMALI"
-      ? "<span class='badge badge-red'>⚠️ ANOMALI</span>"
-      : "<span class='badge badge-yellow'>ℹ️ CUKUP</span>";
     var sensorBadge = (m.sensor || "").includes("ECG+PPG")
       ? "<span class='badge badge-purple'>ECG+PPG</span>"
       : (m.sensor || "").includes("ECG")
       ? "<span class='badge badge-blue'>ECG</span>"
       : "<span class='badge' style='background:rgba(121,192,255,.15);color:#79c0ff'>PPG</span>";
-    var accColor = m.accuracy_pct >= 63 ? "var(--green)" : "var(--red)";
-    html += "<tr data-sensor='" + m.sensor + "' data-status='" + m.status + "'>";
+
+    var f1Color = m.f1_score_pct >= 65 ? "var(--green)" : m.f1_score_pct >= 60 ? "var(--accent)" : "var(--text-main)";
+
+    html += "<tr data-sensor='" + m.sensor + "'>";
     html += "<td><span class='rank-num " + rankClass + "'>" + m.rank + "</span></td>";
-    html += "<td style='max-width:180px'>" + m.model + "</td>";
+    html += "<td style='max-width:200px;font-weight:600'>" + m.model + "</td>";
     html += "<td>" + sensorBadge + "</td>";
-    html += "<td><strong style='color:" + accColor + "'>" + m.accuracy_pct + "%</strong></td>";
-    html += "<td>" + m.precision_pct + "%</td><td>" + m.recall_pct + "%</td><td>" + m.f1_score_pct + "%</td>";
-    html += "<td>" + statusBadge + "</td></tr>";
+    html += "<td><span style='font-size:.85rem;color:var(--text-muted)'>" + (m.sumber_dataset || "—") + "</span></td>";
+    html += "<td><span style='font-size:.85rem;color:var(--text-muted)'>" + (m.mekanisme_balancing || "—") + "</span></td>";
+    html += "<td>" + m.accuracy_pct + "%</td>";
+    html += "<td>" + m.precision_pct + "%</td>";
+    html += "<td>" + m.recall_pct + "%</td>";
+    html += "<td><strong style='color:" + f1Color + ";font-size:1.05rem'>" + m.f1_score_pct + "%</strong></td>";
+    html += "</tr>";
   }
   tbody.innerHTML = html;
 }
@@ -344,7 +342,7 @@ function filterModels(filter, btn) {
   btn.classList.add("active");
   var filtered = leaderboardData;
   if (filter !== "all") {
-    filtered = leaderboardData.filter(function(m) { return m.sensor === filter || m.status === filter; });
+    filtered = leaderboardData.filter(function(m) { return m.sensor === filter; });
   }
   updateLeaderboard(filtered);
 }
@@ -358,6 +356,28 @@ function sortTable(col) {
   updateLeaderboard(sorted);
 }
 
+function renderAllF1Chart(data) {
+  var canvas = document.getElementById("chart-all-f1");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  if (allF1Chart) { allF1Chart.destroy(); allF1Chart = null; }
+
+  var sorted = data.slice().sort(function(a, b) { return b.f1_score_pct - a.f1_score_pct; });
+
+  allF1Chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: sorted.map(function(m) { return m.model + " (" + m.sensor + ")"; }),
+      datasets: [{ label: "F1-Score (%)", data: sorted.map(function(m) { return m.f1_score_pct; }), backgroundColor: "rgba(63,185,80,.75)", borderColor: "#3fb950", borderWidth: 1, borderRadius: 4 }]
+    },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return "F1-Score: " + c.raw + "%"; } } } },
+      scales: { x: { min: 40, max: 80, grid: { color: document.documentElement.getAttribute("data-theme") === "light" ? "#d0d7de" : "#21262d" }, ticks: { callback: function(v) { return v + "%"; } } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+    }
+  });
+}
+
 function renderAllAccuracyChart(data) {
   var canvas = document.getElementById("chart-all-accuracy");
   if (!canvas) return;
@@ -365,42 +385,18 @@ function renderAllAccuracyChart(data) {
   if (allAccuracyChart) { allAccuracyChart.destroy(); allAccuracyChart = null; }
 
   var sorted = data.slice().sort(function(a, b) { return b.accuracy_pct - a.accuracy_pct; });
-  var colors = sorted.map(function(m) {
-    return m.status === "SEHAT" ? "rgba(63,185,80,.75)"
-      : m.status === "ANOMALI" ? "rgba(248,81,73,.75)"
-      : "rgba(210,153,34,.75)";
-  });
 
   allAccuracyChart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: sorted.map(function(m) { return m.model; }),
-      datasets: [{ label: "Akurasi (%)", data: sorted.map(function(m) { return m.accuracy_pct; }), backgroundColor: colors, borderRadius: 4 }]
+      labels: sorted.map(function(m) { return m.model + " (" + m.sensor + ")"; }),
+      datasets: [{ label: "Akurasi (%)", data: sorted.map(function(m) { return m.accuracy_pct; }), backgroundColor: "rgba(47,129,247,.75)", borderColor: "#2f81f7", borderWidth: 1, borderRadius: 4 }]
     },
     options: {
       indexAxis: "y", responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.raw + "%"; } } } },
-      scales: { x: { min: 40, max: 70, grid: { color: document.documentElement.getAttribute("data-theme") === "light" ? "#d0d7de" : "#21262d" }, ticks: { callback: function(v) { return v + "%"; } } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } }
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return "Akurasi: " + c.raw + "%"; } } } },
+      scales: { x: { min: 40, max: 80, grid: { color: document.documentElement.getAttribute("data-theme") === "light" ? "#d0d7de" : "#21262d" }, ticks: { callback: function(v) { return v + "%"; } } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } }
     }
-  });
-}
-
-function renderHealthDistChart(data) {
-  var canvas = document.getElementById("chart-health-dist");
-  if (!canvas) return;
-  var ctx = canvas.getContext("2d");
-  if (healthDistChart) { healthDistChart.destroy(); healthDistChart = null; }
-
-  var counts = { SEHAT: 0, ANOMALI: 0, CUKUP: 0 };
-  data.forEach(function(m) { if (counts[m.status] !== undefined) counts[m.status]++; });
-
-  healthDistChart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Sehat (Stabil)", "Anomali (Bias)", "Cukup / Valid"],
-      datasets: [{ data: [counts.SEHAT, counts.ANOMALI, counts.CUKUP], backgroundColor: ["rgba(63,185,80,.8)", "rgba(248,81,73,.8)", "rgba(210,153,34,.8)"], borderColor: ["#3fb950", "#f85149", "#d29922"], borderWidth: 2 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { padding: 16 } } } }
   });
 }
 

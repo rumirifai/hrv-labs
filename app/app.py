@@ -163,7 +163,7 @@ def api_dataset(sensor):
 
 @app.route("/api/leaderboard")
 def api_leaderboard():
-    """Performa semua model dari rekap_model.csv — NaN-safe."""
+    """Performa semua model dari rekap_model.csv — Perangkingan F1-Score First, NaN-safe."""
     path = os.path.join(DATA_DIR, "rekap_model.csv")
     if not os.path.exists(path):
         return safe_json({"error": "Rekap model tidak ditemukan"}), 404
@@ -176,48 +176,36 @@ def api_leaderboard():
         cl = c.strip().lower()
         if cl == "model":     col_map[c] = "model"
         elif cl == "sensor":  col_map[c] = "sensor"
+        elif cl in ("sumber_dataset", "sumber"): col_map[c] = "sumber_dataset"
+        elif cl in ("kondisi_awal_data", "kondisi"): col_map[c] = "kondisi_awal_data"
+        elif cl in ("rasio_kelas_asli", "rasio"): col_map[c] = "rasio_kelas_asli"
+        elif cl in ("mekanisme_balancing", "balancing"): col_map[c] = "mekanisme_balancing"
         elif cl in ("accuracy", "akurasi"):   col_map[c] = "accuracy"
         elif cl == "precision":               col_map[c] = "precision"
         elif cl in ("recall", "sensitivitas"): col_map[c] = "recall"
         elif cl in ("f1_score", "f1 score", "f1score"): col_map[c] = "f1_score"
-        elif cl in ("keterangan", "catatan"): col_map[c] = "keterangan"
     df = df.rename(columns=col_map)
 
-    # Ensure required columns exist
-    for req in ["model", "sensor", "accuracy", "precision", "recall", "f1_score"]:
-        if req not in df.columns:
-            df[req] = 0.0
-
-    # Convert to numeric, fill NaN with 0
+    # Ensure numeric columns exist
     for num_col in ["accuracy", "precision", "recall", "f1_score"]:
+        if num_col not in df.columns:
+            df[num_col] = 0.0
         df[num_col] = pd.to_numeric(df[num_col], errors="coerce").fillna(0.0)
 
-    df["accuracy_pct"]  = (df["accuracy"]  * 100).round(2)
-    df["f1_score_pct"]  = (df["f1_score"]  * 100).round(2)
-    df["precision_pct"] = (df["precision"] * 100).round(2)
-    df["recall_pct"]    = (df["recall"]    * 100).round(2)
-
-    # ── Rank & status kesehatan ────────────────────────────────────────────
-    df_sorted = df.sort_values("accuracy", ascending=False).reset_index(drop=True)
+    # ── Rank Standar Akademis (F1-Score First -> Accuracy) ────────────────
+    df_sorted = df.sort_values(by=["f1_score", "accuracy"], ascending=False).reset_index(drop=True)
     df_sorted["rank"] = df_sorted.index + 1
 
-    def get_status(row):
-        acc = float(row["accuracy"])
-        rec = float(row["recall"])
-        pre = float(row["precision"])
-        if acc >= 0.60 and abs(rec - pre) < 0.25:
-            return "SEHAT"
-        elif acc < 0.55 or rec > 0.95:
-            return "ANOMALI"
-        return "CUKUP"
-
-    df_sorted["status"] = df_sorted.apply(get_status, axis=1)
+    df_sorted["accuracy_pct"]  = (df_sorted["accuracy"]  * 100).round(2)
+    df_sorted["f1_score_pct"]  = (df_sorted["f1_score"]  * 100).round(2)
+    df_sorted["precision_pct"] = (df_sorted["precision"] * 100).round(2)
+    df_sorted["recall_pct"]    = (df_sorted["recall"]    * 100).round(2)
 
     # Pilih kolom yang dikirim ke frontend
-    out_cols = ["rank", "model", "sensor", "accuracy_pct", "precision_pct",
-                "recall_pct", "f1_score_pct", "status"]
-    if "keterangan" in df_sorted.columns:
-        out_cols.append("keterangan")
+    out_cols = ["rank", "model", "sensor", "sumber_dataset", "kondisi_awal_data",
+                "rasio_kelas_asli", "mekanisme_balancing",
+                "accuracy_pct", "precision_pct", "recall_pct", "f1_score_pct"]
+    out_cols = [c for c in out_cols if c in df_sorted.columns]
 
     records = df_sorted[out_cols].where(
         pd.notnull(df_sorted[out_cols]), None
