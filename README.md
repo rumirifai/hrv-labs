@@ -80,6 +80,7 @@ hrv-labs/
 │   ├── 00_raw/                     # Data mentah CLAS (.mat)
 │   ├── 01_processed/               # CSV tabular & CSV rekap akurasi
 │   └── 02_waveform/                # Array waveform .npy
+│   └── 03_saved_models/            # Hasil model eksperimental
 │
 ├── 📁 reports/                     # Gambar & output laporan skripsi
 ├── 📁 Dokumen/                     # Naskah skripsi & PPT sidang (PDF)
@@ -131,14 +132,14 @@ Buka peramban web dan akses: http://localhost:5000
 
 | Library | Versi | Fungsi |
 |:---|:---:|:---|
-| lask | 3.1.3 | Backend web server |
-| 	ensorflow | 2.18 | Deep learning (CNN-LSTM) |
+| Flask | 3.1.3 | Backend web server |
+| 	Tensorflow | 2.18 | Deep learning (CNN-LSTM) |
 | scikit-learn | 1.6 | SVM, RF, StandardScaler, StratifiedKFold |
 | 
 eurokit2 | 0.2.11 | Pemrosesan sinyal ECG/PPG & ekstraksi HRV |
 | pandas | 2.2 | Manipulasi data tabular |
 | 
-umpy | 1.26 | Komputasi numerik & array waveform |
+Numpy | 1.26 | Komputasi numerik & array waveform |
 
 ---
 
